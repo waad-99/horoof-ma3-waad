@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>🔔 الجرس</title>
+  <script src="https://unpkg.com/peerjs@1.4.7/dist/peerjs.min.js"></script>
+  <style>
+    body {
+      background:#0b0b0b;
+      color:white;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      align-items:center;
+      height:100vh;
+      font-family:Arial;
+      text-align:center;
+    }
+    button {
+      font-size:40px;
+      padding:40px 80px;
+      border:none;
+      border-radius:20px;
+      background:#FFD700;
+      font-weight:900;
+      cursor:pointer;
+    }
+  </style>
+</head>
+<body>
+
+<h1>🔔 اضغط الجرس</h1>
+<p id="status">جاري الاتصال...</p>
+
+<button onclick="buzz()">🔔</button>
+
+<script>
+  const id = location.hash.replace('#','');
+  const peer = new Peer();
+
+  let conn;
+  peer.on('open', () => {
+    conn = peer.connect(id);
+    conn.on('open', () => {
+      document.getElementById('status').textContent = '✅ متصل';
+    });
+  });
+
+  function buzz() {
+    if (!conn) return;
+    conn.send({
+      action: 'buzz',
+      name: '📱 لاعب'
+    });
+  }
+</script>
+
+</body>
+</html>
