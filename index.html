@@ -1,6 +1,3 @@
-<!-- =========================
-     FILE: index.html (FULL)
-     ========================= -->
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 
@@ -328,7 +325,7 @@
       margin-right: 50px;
     }
 
-    /* Scoreboards في الأسفل الجانبي */
+    /* Scoreboards */
     .scoreboard {
       position: fixed;
       bottom: 100px;
@@ -357,20 +354,6 @@
 
     .scoreboard:hover {
       transform: translateY(-5px);
-      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.6),
-        0 8px 20px rgba(0, 0, 0, 0.4),
-        inset 0 1px 0 rgba(255, 255, 255, 0.15),
-        0 0 40px rgba(212, 175, 55, 0.3);
-    }
-
-    .scoreboard::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.8), transparent);
     }
 
     .member {
@@ -392,10 +375,7 @@
       font-weight: 900;
       animation: activePulseGlow 1.5s ease-in-out infinite;
       border: 2px solid #FFD700;
-      box-shadow: 0 4px 20px rgba(255, 215, 0, 0.5),
-        0 0 30px rgba(255, 215, 0, 0.4);
       transform: scale(1.05);
-      text-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
     }
 
     @keyframes activePulseGlow {
@@ -448,9 +428,7 @@
       padding: 45px;
       max-width: 750px;
       width: 90%;
-      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.7),
-        0 10px 25px rgba(0, 0, 0, 0.5),
-        inset 0 2px 4px rgba(255, 255, 255, 0.1);
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.7);
       animation: modalSlideIn 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
     }
 
@@ -483,6 +461,7 @@
       box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
       position: relative;
       overflow: hidden;
+      padding-top: 8px;
     }
 
     .day-card:hover {
@@ -494,6 +473,35 @@
     .day-card.completed {
       border-color: #4CAF50;
       background: linear-gradient(135deg, rgba(76, 175, 80, 0.3) 0%, rgba(45, 27, 78, 0.8) 100%);
+    }
+
+    /* ✅ الفائز داخل بطاقة اليوم */
+    .day-winner {
+      margin-top: 6px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .day-winner img {
+      width: 38px;
+      height: 38px;
+      border-radius: 999px;
+      border: 2px solid rgba(255, 215, 0, 0.9);
+      box-shadow: 0 6px 18px rgba(255, 215, 0, 0.25);
+      object-fit: cover;
+    }
+
+    .day-winner .winner-name {
+      font-size: 11px;
+      font-weight: 900;
+      color: #F4E4B0;
+      max-width: 100px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      text-align: center;
     }
 
     /* Buzzer Mobile Overlay */
@@ -574,7 +582,7 @@
     <button onclick="toggleBuzzerMode()" id="buzzer-btn">🔔 وضع الجرس</button>
   </div>
 
-  <!-- زر Reset في الزاوية -->
+  <!-- زر Reset -->
   <button id="reset-button" onclick="resetAll()">🔄 إعادة تعيين</button>
 
   <!-- شريط الزينة السفلي -->
@@ -739,13 +747,46 @@
           <h3 class="text-2xl font-black mb-4" style="color:#FFD700">الأبطال</h3>
           <div id="v-members" class="text-xl"></div>
         </div>
+
+        <!-- ✅ موافقة اللاعبين قبل الحفظ -->
+        <div class="mt-8 bg-black bg-opacity-30 p-5 rounded-2xl border-2"
+          style="border-color:rgba(255,215,0,0.5)">
+          <label class="flex items-center justify-center gap-3 text-xl font-black" style="color:#FFD700;cursor:pointer">
+            <input type="checkbox" id="approve-save" class="w-6 h-6">
+            موافق على حفظ نتيجة اليوم
+          </label>
+          <div class="text-sm opacity-80 mt-2 text-center" style="color:#F4E4B0">
+            (الزر ✅ إنهاء اليوم لن يعمل بدون الموافقة)
+          </div>
+        </div>
       </div>
 
       <div class="flex gap-6 mt-8">
         <button onclick="captureVictory()" class="flex-1 px-8 py-4 rounded-2xl font-black text-xl"
           style="background:#FFD700;color:#1a0f2e">📸 حفظ الصورة</button>
-        <button onclick="finishDay()" class="flex-1 px-8 py-4 rounded-2xl font-black text-xl"
-          style="background:#28a745;color:white">✅ إنهاء اليوم</button>
+        <button id="finish-day-btn" onclick="finishDay()" class="flex-1 px-8 py-4 rounded-2xl font-black text-xl"
+          style="background:#28a745;color:white;opacity:.6" disabled>✅ إنهاء اليوم</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ✅ نافذة تفاصيل يوم مكتمل (عرض + تعديل) -->
+  <div id="day-result-modal" class="modal">
+    <div class="modal-content max-w-2xl text-center">
+      <h2 class="text-5xl font-black mb-6" style="color:#FFD700;font-family:'Tajawal'">
+        نتيجة اليوم <span id="res-day-num"></span>
+      </h2>
+
+      <div class="bg-black bg-opacity-40 rounded-2xl p-8 mb-8">
+        <img id="res-logo" class="w-32 h-32 rounded-full mx-auto mb-4 border-4"
+          style="border-color:#FFD700;display:none;box-shadow:0 8px 25px rgba(255,215,0,0.35)">
+        <div class="text-3xl font-black" id="res-team" style="color:#F4E4B0">الفريق الفائز</div>
+        <div class="text-sm mt-3 opacity-80" id="res-date" style="color:#F4E4B0"></div>
+      </div>
+
+      <div class="flex gap-4">
+        <button onclick="closeDayResultModal()" class="flex-1" style="background:#007bff;color:white">إغلاق</button>
+        <button onclick="editCompletedDay()" class="flex-1" style="background:#FFD700;color:#1a0f2e">✏️ تعديل</button>
       </div>
     </div>
   </div>
@@ -753,7 +794,13 @@
   <script>
     const letters = ['أ', 'ب', 'ت', 'ث', 'ج', 'ح', 'خ', 'د', 'ذ', 'ر', 'ز', 'س', 'ش', 'ص', 'ض', 'ط', 'ظ', 'ع', 'غ', 'ف', 'ق', 'ك', 'ل', 'م', 'ن', 'ه', 'و', 'ي'];
 
+    // ============================================================
+    // 🔴 مهم جدًا:
+    // الصقي هنا كتلة الأسئلة الضخمة عندك "كما هي" بدون تعديل:
+    // const questions = { ... };
+    // ============================================================
     const questions = {
+ = {
   'أ': [
     { q: 'هي سميت سورة من القرآن باسمه ؟', a: 'إبراهيم' },
     { q: 'من هو الذي ألقى في النار ؟', a: 'إبراهيم عليه السلام' },
@@ -1439,14 +1486,10 @@
     { q: 'أكمل النوم في الأمثال الليل ما قصير إلا على ___ ؟', a: 'نائم' },
     { q: 'أكمل من تراث الآباء والأجداد ( رزق الحلال ___ ) ؟', a: 'يزيد' }
   ]
-};
-
+};    };
 
     // ============================================================
-    // ✅✅✅ تعديل الأسئلة فقط:
-    // - منع تكرار 30 يوم
-    // - زر تغيير بدون حرق
-    // - الحرق فقط عند صح/خطأ
+    // ✅✅✅ منع التكرار + زر تغيير بدون حرق + الحرق فقط عند صح/خطأ
     // ============================================================
 
     const allQuestions = {};
@@ -1494,7 +1537,10 @@
       conn: null,
 
       currentQuestionId: null,
-      tempExcludedQuestionIds: []
+      tempExcludedQuestionIds: [],
+
+      // ✅ لميزة تعديل اليوم المكتمل:
+      viewingCompletedDay: null
     };
 
     const hexGrid = [
@@ -1507,34 +1553,26 @@
     ];
 
     // ============================================================
-    // ✅✅✅ الصوت (مُعدل بالكامل) — يحل مشكلة عدم تشغيل الموسيقى
+    // ✅✅✅ الصوت (معدل) + تخفيض افتراضي
     // ============================================================
-
-    // ✅ AudioContext: لازم يتفعل بعد تفاعل
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
     let audioUnlocked = false;
 
     async function ensureAudioReady() {
       try {
-        // 1) WebAudio (للجرس/المؤثرات)
         if (audioCtx && audioCtx.state === 'suspended') {
           await audioCtx.resume();
         }
-
-        // 2) فك قفل Audio Element (الموسيقى) — مهم للجوال وChrome
         const m = document.getElementById('bg-music');
         if (m && !audioUnlocked) {
           m.muted = true;
-          await m.play();      // تشغيل صامت لحظة
+          await m.play();
           m.pause();
           m.currentTime = 0;
           m.muted = false;
           audioUnlocked = true;
         }
-      } catch (e) {
-        // طبيعي تفشل قبل أول تفاعل
-      }
+      } catch (e) { }
     }
 
     function playChime() {
@@ -1546,7 +1584,7 @@
           osc.connect(gain);
           gain.connect(audioCtx.destination);
           osc.frequency.value = freq;
-          gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+          gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
           gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
           osc.start();
           osc.stop(audioCtx.currentTime + 0.5);
@@ -1560,20 +1598,17 @@
       osc.connect(gain);
       gain.connect(audioCtx.destination);
       osc.frequency.value = freq;
-      gain.gain.value = 0.3;
+      gain.gain.value = 0.25;
       osc.start();
       osc.stop(audioCtx.currentTime + dur);
     }
 
-    // ✅✅ موسيقى: تشغيل/إيقاف
     async function toggleMusic() {
       const m = document.getElementById('bg-music');
-
       try {
         await ensureAudioReady();
-
         if (m.paused) {
-          m.volume = 0.15;
+          m.volume = 0.08; // ✅ أقل (كان عالي)
           m.muted = false;
           await m.play();
           document.getElementById('music-btn').textContent = '🔇 إيقاف';
@@ -1587,7 +1622,6 @@
       }
     }
 
-    // ✅ تفعيل الصوت بعد أول نقرة بأي مكان (يساعد iOS/Chrome)
     document.addEventListener('click', async () => {
       await ensureAudioReady();
     }, { once: true });
@@ -1617,7 +1651,7 @@
       }
     }
 
-    // ✅✅ Buzzer Logic (معدل)
+    // ✅✅ Buzzer Logic
     function toggleBuzzerMode() {
       const id = Math.random().toString(36).substr(2, 5).toUpperCase();
       document.getElementById('buzzer-overlay').style.display = 'flex';
@@ -1626,7 +1660,6 @@
       const hostStatus = document.getElementById('host-status');
       hostStatus.textContent = '⏳ تجهيز الاتصال...';
 
-      // ✅ رابط صحيح 100%
       const buzzerUrl = new URL('buzzer.html', window.location.href);
       buzzerUrl.hash = id;
 
@@ -1637,12 +1670,10 @@
       });
 
       if (state.peer) state.peer.destroy();
-
       state.peer = new Peer(id, { debug: 2 });
 
       state.peer.on('open', () => {
         hostStatus.textContent = `✅ جاهز (ID: ${id})`;
-        console.log('Host PeerID Ready:', id);
       });
 
       state.peer.on('connection', conn => {
@@ -1650,7 +1681,6 @@
 
         conn.on('open', () => {
           hostStatus.textContent = '✅ متصل بجوال الجرس';
-          console.log('Buzzer connected!');
         });
 
         conn.on('data', data => {
@@ -1687,23 +1717,142 @@
       document.getElementById('buzzer-overlay').style.display = 'none';
     }
 
-    // Game Logic
+    // ============================================================
+    // ✅ تخزين/قراءة بيانات الأيام
+    // ============================================================
+    function getDaysStore() {
+      return JSON.parse(localStorage.getItem('horoof_days') || '{}');
+    }
+    function setDaysStore(obj) {
+      localStorage.setItem('horoof_days', JSON.stringify(obj));
+    }
+
+    // ============================================================
+    // ✅ التقويم يعرض اسم + شعار الفائز
+    // ============================================================
     function generateCalendar() {
       const grid = document.getElementById('days-grid');
       grid.innerHTML = '';
-      const saved = JSON.parse(localStorage.getItem('horoof_days') || '{}');
+      const saved = getDaysStore();
+
       for (let i = 1; i <= 30; i++) {
+        const dayData = saved[i]; // { winner, teams, date, approved ... }
         const card = document.createElement('div');
-        card.className = 'day-card' + (saved[i] ? ' completed' : '');
-        card.innerHTML = `<div class="text-4xl font-black" style="color:#FFD700">${i}</div><div class="text-xs font-bold" style="color:#F4E4B0">اليوم ${i}</div>`;
-        card.onclick = () => startDay(i);
+        card.className = 'day-card' + (dayData ? ' completed' : '');
+
+        let inner = `
+          <div class="text-4xl font-black" style="color:#FFD700">${i}</div>
+          <div class="text-xs font-bold" style="color:#F4E4B0">اليوم ${i}</div>
+        `;
+
+        if (dayData && dayData.winner) {
+          inner += `
+            <div class="day-winner">
+              ${dayData.winner.logo ? `<img src="${dayData.winner.logo}" alt="Winner Logo">` : ''}
+              <div class="winner-name">${dayData.winner.name || 'الفريق الفائز'}</div>
+            </div>
+          `;
+        }
+
+        card.innerHTML = inner;
+
+        // ✅ إذا مكتمل: افتح نافذة النتيجة + تعديل
+        card.onclick = () => {
+          if (dayData) openDayResultModal(i, dayData);
+          else startDay(i);
+        };
+
         grid.appendChild(card);
       }
     }
 
+    function openDayResultModal(day, data) {
+      state.viewingCompletedDay = day;
+      document.getElementById('res-day-num').textContent = day;
+
+      const logoEl = document.getElementById('res-logo');
+      if (data.winner && data.winner.logo) {
+        logoEl.src = data.winner.logo;
+        logoEl.style.display = 'block';
+      } else {
+        logoEl.style.display = 'none';
+      }
+
+      document.getElementById('res-team').textContent = (data.winner && data.winner.name) ? data.winner.name : '—';
+      document.getElementById('res-date').textContent = data.date ? `📅 ${new Date(data.date).toLocaleString('ar-SA')}` : '';
+
+      document.getElementById('day-result-modal').classList.add('active');
+    }
+
+    function closeDayResultModal() {
+      document.getElementById('day-result-modal').classList.remove('active');
+      state.viewingCompletedDay = null;
+    }
+
+    // ✅ تعديل يوم مكتمل: يرجع يفتح الإعداد بنفس البيانات
+    function editCompletedDay() {
+      const day = state.viewingCompletedDay;
+      if (!day) return;
+
+      const saved = getDaysStore();
+      const data = saved[day];
+      if (!data || !data.teams) {
+        alert('لا توجد بيانات كافية للتعديل لهذا اليوم.');
+        closeDayResultModal();
+        return;
+      }
+
+      closeDayResultModal();
+
+      // تعبئة state من المخزن
+      state.currentDay = day;
+      state.teams = data.teams;
+      state.currentTeam = 0;
+      state.currentMemberIndex = [0, 0];
+      state.hexStates = {};
+      state.roundWins = [0, 0];
+      state.currentRound = 1;
+
+      // تعبئة شاشة الإعداد
+      document.getElementById('day-num').textContent = day;
+
+      document.getElementById('team1-name').value = state.teams[0].name || 'الفريق 1';
+      document.getElementById('team2-name').value = state.teams[1].name || 'الفريق 2';
+
+      document.getElementById('team1-members').value = (state.teams[0].members || []).join('\n');
+      document.getElementById('team2-members').value = (state.teams[1].members || []).join('\n');
+
+      // عرض شعار محفوظ (Base64)
+      const p1 = document.getElementById('team1-logo-preview');
+      const p2 = document.getElementById('team2-logo-preview');
+      p1.innerHTML = state.teams[0].logo ? `<img src="${state.teams[0].logo}" class="w-20 h-20 rounded-full border-4" style="border-color:#FFD700">` : '';
+      p2.innerHTML = state.teams[1].logo ? `<img src="${state.teams[1].logo}" class="w-20 h-20 rounded-full border-4" style="border-color:#4169E1">` : '';
+
+      // افتح شاشة الإعداد
+      document.getElementById('calendar-screen').classList.add('hidden');
+      document.getElementById('setup-screen').classList.remove('hidden');
+    }
+
+    // ============================================================
+    // بدء يوم جديد
+    // ============================================================
     function startDay(day) {
       state.currentDay = day;
       document.getElementById('day-num').textContent = day;
+
+      // صفّر مدخلات الإعداد الافتراضية (لليوم الجديد)
+      document.getElementById('team1-name').value = '';
+      document.getElementById('team2-name').value = '';
+      document.getElementById('team1-members').value = '';
+      document.getElementById('team2-members').value = '';
+      document.getElementById('team1-logo-preview').innerHTML = '';
+      document.getElementById('team2-logo-preview').innerHTML = '';
+
+      state.teams = [
+        { name: 'الفريق 1', logo: null, members: [], stats: {} },
+        { name: 'الفريق 2', logo: null, members: [], stats: {} }
+      ];
+
       document.getElementById('calendar-screen').classList.add('hidden');
       document.getElementById('setup-screen').classList.remove('hidden');
     }
@@ -1726,8 +1875,11 @@
     function startGame() {
       state.teams[0].name = document.getElementById('team1-name').value || 'الفريق 1';
       state.teams[1].name = document.getElementById('team2-name').value || 'الفريق 2';
-      state.teams[0].members = document.getElementById('team1-members').value.split('\n').filter(m => m.trim());
-      state.teams[1].members = document.getElementById('team2-members').value.split('\n').filter(m => m.trim());
+
+      state.teams[0].members = document.getElementById('team1-members').value.split('\n').map(x => x.trim()).filter(Boolean);
+      state.teams[1].members = document.getElementById('team2-members').value.split('\n').map(x => x.trim()).filter(Boolean);
+
+      // stats
       state.teams.forEach(t => t.members.forEach(m => { if (!t.stats[m]) t.stats[m] = 0; }));
 
       document.getElementById('setup-screen').classList.add('hidden');
@@ -1737,8 +1889,16 @@
 
       const sb1 = document.getElementById('sb1-logo');
       const sb2 = document.getElementById('sb2-logo');
-      if (state.teams[0].logo) { sb1.src = state.teams[0].logo; sb1.style.display = 'block'; }
-      if (state.teams[1].logo) { sb2.src = state.teams[1].logo; sb2.style.display = 'block'; }
+      if (state.teams[0].logo) { sb1.src = state.teams[0].logo; sb1.style.display = 'block'; } else sb1.style.display = 'none';
+      if (state.teams[1].logo) { sb2.src = state.teams[1].logo; sb2.style.display = 'block'; } else sb2.style.display = 'none';
+
+      // reset round and board (خصوصاً لو تعديل)
+      state.currentTeam = 0;
+      state.currentMemberIndex = [0, 0];
+      state.hexStates = {};
+      state.roundWins = [0, 0];
+      state.currentRound = 1;
+      document.getElementById('current-round').textContent = 1;
 
       updateScoreboards();
       generateHexGrid();
@@ -1752,7 +1912,7 @@
         document.getElementById(`sb${i + 1}-rounds`).textContent = state.roundWins[i];
         const membersDiv = document.getElementById(`sb${i + 1}-members`);
         membersDiv.innerHTML = '';
-        t.members.forEach((m, idx) => {
+        (t.members || []).forEach((m, idx) => {
           const div = document.createElement('div');
           div.className = 'member' + (idx === state.currentMemberIndex[i] && state.currentTeam === i ? ' active' : '');
           div.innerHTML = `<span>${m}</span><span style="color:#FFD700;font-weight:900">${t.stats[m] || 0} ✅</span>`;
@@ -1864,7 +2024,7 @@
       document.getElementById('current-turn').textContent = m || t.name;
     }
 
-    // BFS Pathfinding (كما هو)
+    // BFS Pathfinding
     function checkWinBFS(teamIdx) {
       const owned = Object.keys(state.hexStates).filter(l => state.hexStates[l] === teamIdx + 1);
       if (owned.length < 4) return false;
@@ -1933,18 +2093,35 @@
       const t = state.teams[teamIdx];
       document.getElementById('v-team').textContent = t.name;
 
+      const vLogo = document.getElementById('v-logo');
       if (t.logo) {
-        const vLogo = document.getElementById('v-logo');
         vLogo.src = t.logo;
         vLogo.style.display = 'block';
+      } else {
+        vLogo.style.display = 'none';
       }
 
       let mvp = { name: '--', score: 0 };
-      t.members.forEach(m => { if ((t.stats[m] || 0) >= mvp.score) mvp = { name: m, score: (t.stats[m] || 0) }; });
+      t.members.forEach(m => {
+        if ((t.stats[m] || 0) >= mvp.score) mvp = { name: m, score: (t.stats[m] || 0) };
+      });
 
       document.getElementById('v-mvp').textContent = mvp.name;
       document.getElementById('v-mvp-score').textContent = mvp.score;
       document.getElementById('v-members').innerHTML = t.members.map(m => `<div>${m} (${t.stats[m] || 0})</div>`).join('');
+
+      // ✅ تفعيل شرط الموافقة
+      const chk = document.getElementById('approve-save');
+      const btn = document.getElementById('finish-day-btn');
+      chk.checked = false;
+      btn.disabled = true;
+      btn.style.opacity = .6;
+
+      chk.onchange = () => {
+        btn.disabled = !chk.checked;
+        btn.style.opacity = chk.checked ? 1 : .6;
+      };
+
       document.getElementById('victory-modal').classList.add('active');
     }
 
@@ -1958,13 +2135,42 @@
       });
     }
 
+    // ✅ حفظ اليوم: لازم موافقة + يخزن بيانات الفريقين كاملة للتعديل لاحقاً
     function finishDay() {
+      const chk = document.getElementById('approve-save');
+      if (!chk.checked) {
+        alert('لازم تحطون ✅ موافق على حفظ النتيجة أولاً.');
+        return;
+      }
+
       const winner = state.roundWins[0] >= 2 ? 0 : 1;
-      const days = JSON.parse(localStorage.getItem('horoof_days') || '{}');
-      days[state.currentDay] = { name: state.teams[winner].name, logo: state.teams[winner].logo, date: new Date().toISOString() };
-      localStorage.setItem('horoof_days', JSON.stringify(days));
+      const saved = getDaysStore();
+
+      // إذا اليوم موجود مسبقاً (تعديل/إعادة لعب)
+      if (saved[state.currentDay]) {
+        const ok = confirm('هذا اليوم محفوظ مسبقاً. تبين تستبدلين النتيجة وتكتبين فوقها؟');
+        if (!ok) return;
+      }
+
+      saved[state.currentDay] = {
+        winner: {
+          name: state.teams[winner].name,
+          logo: state.teams[winner].logo
+        },
+        teams: state.teams, // ✅ نخزن الفريقين + الشعارات + الأعضاء + stats
+        date: new Date().toISOString(),
+        approved: true
+      };
+
+      setDaysStore(saved);
+
       document.getElementById('victory-modal').classList.remove('active');
-      backToCalendar();
+
+      // رجوع للتقويم مع تحديث العرض
+      document.getElementById('top-bar').style.display = 'none';
+      document.getElementById('game-screen').classList.add('hidden');
+      document.getElementById('calendar-screen').classList.remove('hidden');
+      generateCalendar();
     }
 
     function backToCalendar() {
@@ -1978,6 +2184,7 @@
       if (confirm('⚠️ مسح جميع البيانات؟')) { localStorage.clear(); location.reload(); }
     }
 
+    // init
     createRamadanBG();
     createFooterDecorations();
     generateCalendar();
@@ -1985,4 +2192,3 @@
 </body>
 
 </html>
-
