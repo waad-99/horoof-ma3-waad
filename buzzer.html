@@ -1,59 +1,134 @@
+<!-- =========================
+     FILE: buzzer.html
+     ========================= -->
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
-  <meta charset="UTF-8">
-  <title>🔔 الجرس</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>الجرس</title>
   <script src="https://unpkg.com/peerjs@1.4.7/dist/peerjs.min.js"></script>
   <style>
     body {
-      background:#0b0b0b;
-      color:white;
-      display:flex;
-      flex-direction:column;
-      justify-content:center;
-      align-items:center;
-      height:100vh;
-      font-family:Arial;
-      text-align:center;
+      margin: 0;
+      font-family: Tahoma, Arial, sans-serif;
+      background: #0b0f1a;
+      color: white;
+      display: flex;
+      min-height: 100vh;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 24px;
     }
+
+    .card {
+      width: min(520px, 100%);
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 215, 0, 0.25);
+      border-radius: 18px;
+      padding: 24px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    }
+
+    h1 {
+      margin: 0 0 12px;
+      color: #FFD700;
+      font-size: 34px;
+    }
+
+    #status {
+      margin: 12px 0 18px;
+      font-size: 16px;
+      opacity: 0.9;
+    }
+
     button {
-      font-size:40px;
-      padding:40px 80px;
-      border:none;
-      border-radius:20px;
-      background:#FFD700;
-      font-weight:900;
-      cursor:pointer;
+      width: 100%;
+      border: none;
+      border-radius: 14px;
+      padding: 18px 16px;
+      font-size: 22px;
+      font-weight: 800;
+      background: linear-gradient(135deg, #FFD700, #FFA500);
+      color: #1a0f2e;
+      cursor: pointer;
+      transition: transform .12s ease;
+    }
+
+    button:active {
+      transform: scale(0.98);
+    }
+
+    .small {
+      font-size: 13px;
+      opacity: 0.7;
+      margin-top: 14px;
+      line-height: 1.6;
     }
   </style>
 </head>
+
 <body>
+  <div class="card">
+    <h1>🔔 الجرس</h1>
+    <div id="status">⏳ تجهيز...</div>
+    <button onclick="buzz()">اضغط الجرس</button>
+    <div class="small">
+      إذا ما اتصل: جرّبي بيانات الجوال بدل الواي فاي.<br />
+      هذه الصفحة لازم تُفتح من QRCode.
+    </div>
+  </div>
 
-<h1>🔔 اضغط الجرس</h1>
-<p id="status">جاري الاتصال...</p>
+  <script>
+    const hostId = location.hash.replace('#', '');
+    const statusEl = document.getElementById('status');
+    const btn = document.querySelector('button');
 
-<button onclick="buzz()">🔔</button>
+    btn.disabled = true;
+    btn.style.opacity = 0.5;
 
-<script>
-  const id = location.hash.replace('#','');
-  const peer = new Peer();
+    if (!hostId) {
+      statusEl.textContent = '❌ لا يوجد كود اتصال في الرابط';
+      alert('افتح الصفحة من QRCode الصحيح');
+    }
 
-  let conn;
-  peer.on('open', () => {
-    conn = peer.connect(id);
-    conn.on('open', () => {
-      document.getElementById('status').textContent = '✅ متصل';
+    const peer = new Peer(null, { debug: 2 });
+    let conn = null;
+
+    peer.on('open', () => {
+      statusEl.textContent = '⏳ جاري الاتصال بالمضيف...';
+      conn = peer.connect(hostId);
+
+      conn.on('open', () => {
+        statusEl.textContent = '✅ متصل';
+        btn.disabled = false;
+        btn.style.opacity = 1;
+      });
+
+      conn.on('error', (e) => {
+        statusEl.textContent = '❌ خطأ في الاتصال';
+        console.error(e);
+      });
+
+      conn.on('close', () => {
+        statusEl.textContent = '⚠️ تم قطع الاتصال';
+        btn.disabled = true;
+        btn.style.opacity = 0.5;
+      });
     });
-  });
 
-  function buzz() {
-    if (!conn) return;
-    conn.send({
-      action: 'buzz',
-      name: '📱 لاعب'
+    peer.on('error', (e) => {
+      statusEl.textContent = '❌ PeerJS Error';
+      console.error(e);
     });
-  }
-</script>
 
+    function buzz() {
+      if (!conn || conn.open !== true) return;
+      conn.send({ action: 'buzz', name: '🔔' });
+    }
+  </script>
 </body>
+
 </html>
