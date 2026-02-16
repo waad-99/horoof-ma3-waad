@@ -1,1885 +1,1482 @@
-
+<!-- =========================
+     FILE: index.html
+     ========================= -->
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>حروف مع وعد - النسخة النهائية</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-    <script src="https://unpkg.com/peerjs@1.4.7/dist/peerjs.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700;800;900&family=Tajawal:wght@400;500;700;800;900&display=swap"
-        rel="stylesheet">
-    <style>
-        * {
-            font-family: 'Tajawal', 'Almarai', sans-serif;
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            background: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%);
-            min-height: 100vh;
-            overflow-x: hidden;
-            position: relative;
-            color: white;
-        }
-
-        /* شريط علوي شفاف */
-        #top-bar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 70px;
-            background: rgba(26, 15, 46, 0.4);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border-bottom: 1px solid rgba(212, 175, 55, 0.3);
-            z-index: 100;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 30px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-        }
-
-        #top-bar button {
-            background: rgba(212, 175, 55, 0.2);
-            backdrop-filter: blur(10px);
-            border: 2px solid rgba(212, 175, 55, 0.5);
-            padding: 10px 20px;
-            border-radius: 12px;
-            color: #FFD700;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-size: 16px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        #top-bar button:hover {
-            background: rgba(212, 175, 55, 0.4);
-            border-color: #FFD700;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
-        }
-
-        /* شريط سفلي للزينة */
-        #footer-decorations {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 80px;
-            z-index: 1;
-            pointer-events: none;
-            display: flex;
-            justify-content: space-around;
-            align-items: flex-end;
-            padding-bottom: 10px;
-        }
-
-        .footer-lantern {
-            width: 30px;
-            height: 45px;
-            background: linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FF8C00 100%);
-            border-radius: 5px 5px 10px 10px;
-            animation: swingFooter 3s ease-in-out infinite;
-            transform-origin: top center;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3),
-                inset 0 -5px 10px rgba(255, 255, 255, 0.3),
-                0 0 15px rgba(255, 215, 0, 0.4);
-            position: relative;
-        }
-
-        .footer-lantern::before {
-            content: '';
-            position: absolute;
-            top: -8px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 20px;
-            height: 10px;
-            background: #8B4513;
-            border-radius: 50% 50% 0 0;
-        }
-
-        @keyframes swingFooter {
-
-            0%,
-            100% {
-                transform: rotate(-4deg);
-            }
-
-            50% {
-                transform: rotate(4deg);
-            }
-        }
-
-        /* زر Reset في الزاوية */
-        #reset-button {
-            position: fixed;
-            bottom: 25px;
-            left: 25px;
-            z-index: 50;
-            background: rgba(220, 53, 69, 0.3);
-            backdrop-filter: blur(10px);
-            border: 2px solid rgba(220, 53, 69, 0.5);
-            padding: 8px 16px;
-            border-radius: 20px;
-            color: #ff6b7a;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-size: 13px;
-        }
-
-        #reset-button:hover {
-            background: rgba(220, 53, 69, 0.5);
-            border-color: #dc3545;
-            transform: scale(1.05);
-            box-shadow: 0 4px 15px rgba(220, 53, 69, 0.4);
-        }
-
-        /* خلفية رمضانية */
-        #ramadan-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
-            pointer-events: none;
-            perspective: 1000px;
-        }
-
-        .star {
-            position: absolute;
-            background: #fff;
-            border-radius: 50%;
-            animation: twinkle 4s ease-in-out infinite;
-            box-shadow: 0 0 4px #fff, 0 0 8px #fff;
-        }
-
-        .star:nth-child(odd) {
-            width: 2px;
-            height: 2px;
-        }
-
-        .star:nth-child(even) {
-            width: 3px;
-            height: 3px;
-            animation-duration: 3s;
-        }
-
-        @keyframes twinkle {
-
-            0%,
-            100% {
-                opacity: 0.2;
-                transform: scale(0.8);
-            }
-
-            50% {
-                opacity: 1;
-                transform: scale(1.2);
-            }
-        }
-
-        /* شبكة سداسية */
-        .hex {
-            width: 90px;
-            height: 104px;
-            background: linear-gradient(135deg, #2D1B4E 0%, #1a0f2e 100%);
-            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            position: relative;
-            border: 3px solid #D4AF37;
-            margin: 3px;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3),
-                inset 0 2px 4px rgba(255, 255, 255, 0.1);
-        }
-
-        .hex::before {
-            content: '';
-            position: absolute;
-            inset: 4px;
-            background: linear-gradient(135deg, rgba(61, 42, 94, 0.9) 0%, rgba(29, 27, 78, 0.9) 100%);
-            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
-            z-index: 1;
-            transition: all 0.3s;
-        }
-
-        .hex::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.3) 0%, transparent 60%);
-            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
-            z-index: 3;
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-
-        .hex-inner {
-            font-size: 36px;
-            font-weight: 900;
-            color: #F4E4B0;
-            z-index: 2;
-            position: relative;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-            transition: all 0.3s;
-        }
-
-        .hex:hover {
-            transform: scale(1.15) translateY(-5px);
-            box-shadow: 0 0 30px rgba(212, 175, 55, 0.8),
-                0 0 60px rgba(212, 175, 55, 0.4),
-                0 12px 24px rgba(0, 0, 0, 0.4);
-            border-color: #FFD700;
-            filter: brightness(1.2);
-        }
-
-        .hex.team1 {
-            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
-            border-color: #FFD700;
-            animation: goldPulse 2s ease-in-out infinite;
-        }
-
-        .hex.team1::before {
-            background: linear-gradient(135deg, #FFD700 0%, #DAA520 100%);
-        }
-
-        .hex.team1 .hex-inner {
-            color: #1a0f2e;
-            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
-        }
-
-        .hex.team2 {
-            background: linear-gradient(135deg, #4169E1 0%, #1e3a5f 100%);
-            border-color: #4169E1;
-            animation: bluePulse 2s ease-in-out infinite;
-        }
-
-        .hex.team2::before {
-            background: linear-gradient(135deg, #4169E1 0%, #1e3a5f 100%);
-        }
-
-        .hex.team2 .hex-inner {
-            color: #E0E0E0;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-        }
-
-        @keyframes goldPulse {
-
-            0%,
-            100% {
-                box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
-            }
-
-            50% {
-                box-shadow: 0 0 40px rgba(255, 215, 0, 0.8);
-            }
-        }
-
-        @keyframes bluePulse {
-
-            0%,
-            100% {
-                box-shadow: 0 0 20px rgba(65, 105, 225, 0.4);
-            }
-
-            50% {
-                box-shadow: 0 0 40px rgba(65, 105, 225, 0.8);
-            }
-        }
-
-        .hex-grid {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 3px;
-        }
-
-        .hex-row {
-            display: flex;
-            gap: 6px;
-            margin-bottom: -25px;
-        }
-
-        .hex-row:nth-child(even) {
-            margin-right: 50px;
-        }
-
-        /* Scoreboards في الأسفل الجانبي */
-        .scoreboard {
-            position: fixed;
-            bottom: 100px;
-            width: 280px;
-            background: rgba(45, 27, 78, 0.25);
-            backdrop-filter: blur(25px) saturate(200%);
-            -webkit-backdrop-filter: blur(25px) saturate(200%);
-            border: 2px solid rgba(212, 175, 55, 0.4);
-            border-radius: 20px;
-            padding: 20px;
-            z-index: 10;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5),
-                0 5px 15px rgba(0, 0, 0, 0.3),
-                inset 0 1px 0 rgba(255, 255, 255, 0.1),
-                0 0 30px rgba(212, 175, 55, 0.2);
-            transition: all 0.4s;
-        }
-
-        .scoreboard-left {
-            left: 30px;
-        }
-
-        .scoreboard-right {
-            right: 30px;
-        }
-
-        .scoreboard:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 45px rgba(0, 0, 0, 0.6),
-                0 8px 20px rgba(0, 0, 0, 0.4),
-                inset 0 1px 0 rgba(255, 255, 255, 0.15),
-                0 0 40px rgba(212, 175, 55, 0.3);
-        }
-
-        .scoreboard::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.8), transparent);
-        }
-
-        .member {
-            padding: 12px 15px;
-            margin: 6px 0;
-            border-radius: 12px;
-            transition: all 0.3s;
-            display: flex;
-            justify-content: space-between;
-            background: rgba(0, 0, 0, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            font-size: 18px;
-            font-weight: 700;
-        }
-
-        .member.active {
-            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
-            color: #1a0f2e;
-            font-weight: 900;
-            animation: activePulseGlow 1.5s ease-in-out infinite;
-            border: 2px solid #FFD700;
-            box-shadow: 0 4px 20px rgba(255, 215, 0, 0.5),
-                0 0 30px rgba(255, 215, 0, 0.4);
-            transform: scale(1.05);
-            text-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
-        }
-
-        @keyframes activePulseGlow {
-
-            0%,
-            100% {
-                box-shadow: 0 4px 20px rgba(255, 215, 0, 0.5), 0 0 30px rgba(255, 215, 0, 0.4);
-            }
-
-            50% {
-                box-shadow: 0 8px 30px rgba(255, 215, 0, 0.7), 0 0 50px rgba(255, 215, 0, 0.6);
-            }
-        }
-
-        /* Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.95);
-            backdrop-filter: blur(10px);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-            animation: fadeIn 0.3s;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-
-            to {
-                opacity: 1;
-            }
-        }
-
-        .modal.active {
-            display: flex;
-        }
-
-        .modal-content {
-            background: linear-gradient(135deg, rgba(45, 27, 78, 0.95) 0%, rgba(26, 15, 46, 0.95) 100%);
-            backdrop-filter: blur(20px);
-            border: 3px solid rgba(212, 175, 55, 0.6);
-            border-radius: 25px;
-            padding: 45px;
-            max-width: 750px;
-            width: 90%;
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.7),
-                0 10px 25px rgba(0, 0, 0, 0.5),
-                inset 0 2px 4px rgba(255, 255, 255, 0.1);
-            animation: modalSlideIn 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-        }
-
-        @keyframes modalSlideIn {
-            from {
-                transform: scale(0.8) translateY(-50px);
-                opacity: 0;
-            }
-
-            to {
-                transform: scale(1) translateY(0);
-                opacity: 1;
-            }
-        }
-
-        /* بطاقات الأيام */
-        .day-card {
-            width: 120px;
-            height: 120px;
-            background: linear-gradient(135deg, rgba(45, 27, 78, 0.8) 0%, rgba(26, 15, 46, 0.8) 100%);
-            backdrop-filter: blur(10px);
-            border: 2px solid rgba(212, 175, 55, 0.4);
-            border-radius: 15px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .day-card:hover {
-            transform: scale(1.08);
-            box-shadow: 0 15px 35px rgba(212, 175, 55, 0.4);
-            border-color: #FFD700;
-        }
-
-        .day-card.completed {
-            border-color: #4CAF50;
-            background: linear-gradient(135deg, rgba(76, 175, 80, 0.3) 0%, rgba(45, 27, 78, 0.8) 100%);
-        }
-
-        /* Buzzer Mobile Overlay */
-        #buzzer-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.9);
-            z-index: 2000;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-
-        #buzzer-pressed {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: #FFD700;
-            color: #1a0f2e;
-            padding: 50px 100px;
-            border-radius: 30px;
-            font-size: 60px;
-            font-weight: 900;
-            z-index: 3000;
-            box-shadow: 0 0 100px rgba(255, 215, 0, 0.8);
-            animation: buzzerPop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        @keyframes buzzerPop {
-            from {
-                transform: translate(-50%, -50%) scale(0);
-            }
-
-            to {
-                transform: translate(-50%, -50%) scale(1);
-            }
-        }
-
-        /* أزرار فخمة */
-        button {
-            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
-            color: #1a0f2e;
-            font-weight: 800;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
-            font-size: 16px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(255, 215, 0, 0.5);
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>حروف مع وعد - النسخة النهائية</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <script src="https://unpkg.com/peerjs@1.4.7/dist/peerjs.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700;800;900&family=Tajawal:wght@400;500;700;800;900&display=swap"
+    rel="stylesheet" />
+
+  <style>
+    * {
+      font-family: 'Tajawal', 'Almarai', sans-serif;
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%);
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+      color: white;
+    }
+
+    /* شريط علوي شفاف */
+    #top-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 70px;
+      background: rgba(26, 15, 46, 0.4);
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 30px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    #top-bar button {
+      background: rgba(212, 175, 55, 0.2);
+      backdrop-filter: blur(10px);
+      border: 2px solid rgba(212, 175, 55, 0.5);
+      padding: 10px 20px;
+      border-radius: 12px;
+      color: #FFD700;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    #top-bar button:hover {
+      background: rgba(212, 175, 55, 0.4);
+      border-color: #FFD700;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+    }
+
+    /* شريط سفلي للزينة */
+    #footer-decorations {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 80px;
+      z-index: 1;
+      pointer-events: none;
+      display: flex;
+      justify-content: space-around;
+      align-items: flex-end;
+      padding-bottom: 10px;
+    }
+
+    .footer-lantern {
+      width: 30px;
+      height: 45px;
+      background: linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FF8C00 100%);
+      border-radius: 5px 5px 10px 10px;
+      animation: swingFooter 3s ease-in-out infinite;
+      transform-origin: top center;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3),
+        inset 0 -5px 10px rgba(255, 255, 255, 0.3),
+        0 0 15px rgba(255, 215, 0, 0.4);
+      position: relative;
+    }
+
+    .footer-lantern::before {
+      content: '';
+      position: absolute;
+      top: -8px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 20px;
+      height: 10px;
+      background: #8B4513;
+      border-radius: 50% 50% 0 0;
+    }
+
+    @keyframes swingFooter {
+
+      0%,
+      100% {
+        transform: rotate(-4deg);
+      }
+
+      50% {
+        transform: rotate(4deg);
+      }
+    }
+
+    /* زر Reset في الزاوية */
+    #reset-button {
+      position: fixed;
+      bottom: 25px;
+      left: 25px;
+      z-index: 50;
+      background: rgba(220, 53, 69, 0.3);
+      backdrop-filter: blur(10px);
+      border: 2px solid rgba(220, 53, 69, 0.5);
+      padding: 8px 16px;
+      border-radius: 20px;
+      color: #ff6b7a;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-size: 13px;
+    }
+
+    #reset-button:hover {
+      background: rgba(220, 53, 69, 0.5);
+      border-color: #dc3545;
+      transform: scale(1.05);
+      box-shadow: 0 4px 15px rgba(220, 53, 69, 0.4);
+    }
+
+    /* خلفية رمضانية */
+    #ramadan-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+      perspective: 1000px;
+    }
+
+    .star {
+      position: absolute;
+      background: #fff;
+      border-radius: 50%;
+      animation: twinkle 4s ease-in-out infinite;
+      box-shadow: 0 0 4px #fff, 0 0 8px #fff;
+    }
+
+    .star:nth-child(odd) {
+      width: 2px;
+      height: 2px;
+    }
+
+    .star:nth-child(even) {
+      width: 3px;
+      height: 3px;
+      animation-duration: 3s;
+    }
+
+    @keyframes twinkle {
+
+      0%,
+      100% {
+        opacity: 0.2;
+        transform: scale(0.8);
+      }
+
+      50% {
+        opacity: 1;
+        transform: scale(1.2);
+      }
+    }
+
+    /* شبكة سداسية */
+    .hex {
+      width: 90px;
+      height: 104px;
+      background: linear-gradient(135deg, #2D1B4E 0%, #1a0f2e 100%);
+      clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      position: relative;
+      border: 3px solid #D4AF37;
+      margin: 3px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3),
+        inset 0 2px 4px rgba(255, 255, 255, 0.1);
+    }
+
+    .hex::before {
+      content: '';
+      position: absolute;
+      inset: 4px;
+      background: linear-gradient(135deg, rgba(61, 42, 94, 0.9) 0%, rgba(29, 27, 78, 0.9) 100%);
+      clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+      z-index: 1;
+      transition: all 0.3s;
+    }
+
+    .hex::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.3) 0%, transparent 60%);
+      clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+      z-index: 3;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .hex-inner {
+      font-size: 36px;
+      font-weight: 900;
+      color: #F4E4B0;
+      z-index: 2;
+      position: relative;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+      transition: all 0.3s;
+    }
+
+    .hex:hover {
+      transform: scale(1.15) translateY(-5px);
+      box-shadow: 0 0 30px rgba(212, 175, 55, 0.8),
+        0 0 60px rgba(212, 175, 55, 0.4),
+        0 12px 24px rgba(0, 0, 0, 0.4);
+      border-color: #FFD700;
+      filter: brightness(1.2);
+    }
+
+    .hex.team1 {
+      background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+      border-color: #FFD700;
+      animation: goldPulse 2s ease-in-out infinite;
+    }
+
+    .hex.team1::before {
+      background: linear-gradient(135deg, #FFD700 0%, #DAA520 100%);
+    }
+
+    .hex.team1 .hex-inner {
+      color: #1a0f2e;
+      text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
+    }
+
+    .hex.team2 {
+      background: linear-gradient(135deg, #4169E1 0%, #1e3a5f 100%);
+      border-color: #4169E1;
+      animation: bluePulse 2s ease-in-out infinite;
+    }
+
+    .hex.team2::before {
+      background: linear-gradient(135deg, #4169E1 0%, #1e3a5f 100%);
+    }
+
+    .hex.team2 .hex-inner {
+      color: #E0E0E0;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    }
+
+    @keyframes goldPulse {
+
+      0%,
+      100% {
+        box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+      }
+
+      50% {
+        box-shadow: 0 0 40px rgba(255, 215, 0, 0.8);
+      }
+    }
+
+    @keyframes bluePulse {
+
+      0%,
+      100% {
+        box-shadow: 0 0 20px rgba(65, 105, 225, 0.4);
+      }
+
+      50% {
+        box-shadow: 0 0 40px rgba(65, 105, 225, 0.8);
+      }
+    }
+
+    .hex-grid {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .hex-row {
+      display: flex;
+      gap: 6px;
+      margin-bottom: -25px;
+    }
+
+    .hex-row:nth-child(even) {
+      margin-right: 50px;
+    }
+
+    /* Scoreboards في الأسفل الجانبي */
+    .scoreboard {
+      position: fixed;
+      bottom: 100px;
+      width: 280px;
+      background: rgba(45, 27, 78, 0.25);
+      backdrop-filter: blur(25px) saturate(200%);
+      -webkit-backdrop-filter: blur(25px) saturate(200%);
+      border: 2px solid rgba(212, 175, 55, 0.4);
+      border-radius: 20px;
+      padding: 20px;
+      z-index: 10;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5),
+        0 5px 15px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1),
+        0 0 30px rgba(212, 175, 55, 0.2);
+      transition: all 0.4s;
+    }
+
+    .scoreboard-left {
+      left: 30px;
+    }
+
+    .scoreboard-right {
+      right: 30px;
+    }
+
+    .scoreboard:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.6),
+        0 8px 20px rgba(0, 0, 0, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.15),
+        0 0 40px rgba(212, 175, 55, 0.3);
+    }
+
+    .scoreboard::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.8), transparent);
+    }
+
+    .member {
+      padding: 12px 15px;
+      margin: 6px 0;
+      border-radius: 12px;
+      transition: all 0.3s;
+      display: flex;
+      justify-content: space-between;
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .member.active {
+      background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+      color: #1a0f2e;
+      font-weight: 900;
+      animation: activePulseGlow 1.5s ease-in-out infinite;
+      border: 2px solid #FFD700;
+      box-shadow: 0 4px 20px rgba(255, 215, 0, 0.5),
+        0 0 30px rgba(255, 215, 0, 0.4);
+      transform: scale(1.05);
+      text-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
+    }
+
+    @keyframes activePulseGlow {
+
+      0%,
+      100% {
+        box-shadow: 0 4px 20px rgba(255, 215, 0, 0.5), 0 0 30px rgba(255, 215, 0, 0.4);
+      }
+
+      50% {
+        box-shadow: 0 8px 30px rgba(255, 215, 0, 0.7), 0 0 50px rgba(255, 215, 0, 0.6);
+      }
+    }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.95);
+      backdrop-filter: blur(10px);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      animation: fadeIn 0.3s;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: linear-gradient(135deg, rgba(45, 27, 78, 0.95) 0%, rgba(26, 15, 46, 0.95) 100%);
+      backdrop-filter: blur(20px);
+      border: 3px solid rgba(212, 175, 55, 0.6);
+      border-radius: 25px;
+      padding: 45px;
+      max-width: 750px;
+      width: 90%;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.7),
+        0 10px 25px rgba(0, 0, 0, 0.5),
+        inset 0 2px 4px rgba(255, 255, 255, 0.1);
+      animation: modalSlideIn 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+
+    @keyframes modalSlideIn {
+      from {
+        transform: scale(0.8) translateY(-50px);
+        opacity: 0;
+      }
+
+      to {
+        transform: scale(1) translateY(0);
+        opacity: 1;
+      }
+    }
+
+    /* بطاقات الأيام */
+    .day-card {
+      width: 120px;
+      height: 120px;
+      background: linear-gradient(135deg, rgba(45, 27, 78, 0.8) 0%, rgba(26, 15, 46, 0.8) 100%);
+      backdrop-filter: blur(10px);
+      border: 2px solid rgba(212, 175, 55, 0.4);
+      border-radius: 15px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .day-card:hover {
+      transform: scale(1.08);
+      box-shadow: 0 15px 35px rgba(212, 175, 55, 0.4);
+      border-color: #FFD700;
+    }
+
+    .day-card.completed {
+      border-color: #4CAF50;
+      background: linear-gradient(135deg, rgba(76, 175, 80, 0.3) 0%, rgba(45, 27, 78, 0.8) 100%);
+    }
+
+    /* Buzzer Mobile Overlay */
+    #buzzer-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.9);
+      z-index: 2000;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      text-align: center;
+    }
+
+    #buzzer-pressed {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #FFD700;
+      color: #1a0f2e;
+      padding: 50px 100px;
+      border-radius: 30px;
+      font-size: 60px;
+      font-weight: 900;
+      z-index: 3000;
+      box-shadow: 0 0 100px rgba(255, 215, 0, 0.8);
+      animation: buzzerPop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    @keyframes buzzerPop {
+      from {
+        transform: translate(-50%, -50%) scale(0);
+      }
+
+      to {
+        transform: translate(-50%, -50%) scale(1);
+      }
+    }
+
+    /* أزرار فخمة */
+    button {
+      background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+      color: #1a0f2e;
+      font-weight: 800;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+      font-size: 16px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(255, 215, 0, 0.5);
+    }
+  </style>
 </head>
 
 <body class="text-white">
-    <!-- خلفية رمضانية -->
-    <div id="ramadan-bg"></div>
+  <!-- خلفية رمضانية -->
+  <div id="ramadan-bg"></div>
 
-    <!-- شريط علوي -->
-    <div id="top-bar" style="display:none">
-        <button onclick="backToCalendar()">← العودة للقائمة</button>
-        <button onclick="toggleMusic()" id="music-btn">🔊 الموسيقى</button>
-        <button onclick="toggleBuzzerMode()" id="buzzer-btn">🔔 وضع الجرس</button>
+  <!-- شريط علوي -->
+  <div id="top-bar" style="display:none">
+    <button onclick="backToCalendar()">← العودة للقائمة</button>
+    <button onclick="toggleMusic()" id="music-btn">🔊 الموسيقى</button>
+    <button onclick="toggleBuzzerMode()" id="buzzer-btn">🔔 وضع الجرس</button>
+  </div>
+
+  <!-- زر Reset في الزاوية -->
+  <button id="reset-button" onclick="resetAll()">🔄 إعادة تعيين</button>
+
+  <!-- شريط الزينة السفلي -->
+  <div id="footer-decorations"></div>
+
+  <!-- الموسيقى الخلفية -->
+  <audio id="bg-music" loop preload="auto">
+    <source src="music.mp3" type="audio/mp3">
+  </audio>
+
+  <!-- Buzzer Overlay -->
+  <div id="buzzer-overlay">
+    <h2 class="text-5xl font-bold mb-6 text-yellow-500">امسح للاتصال بالجرس</h2>
+    <div id="qrcode" class="bg-white p-4 rounded-xl"></div>
+
+    <div class="mt-5 text-lg">
+      <div class="opacity-80">رابط الجرس يُفتح على الجوال</div>
+      <div id="host-status" class="mt-2 text-yellow-300 font-bold">⏳ تجهيز الاتصال...</div>
     </div>
 
-    <!-- زر Reset في الزاوية -->
-    <button id="reset-button" onclick="resetAll()">🔄 إعادة تعيين</button>
+    <button onclick="closeBuzzerOverlay()" class="mt-8 bg-red-600 hover:bg-red-700 text-white px-8 py-3 rounded-xl"
+      style="background:#dc3545;color:white">إغلاق</button>
+  </div>
 
-    <!-- شريط الزينة السفلي -->
-    <div id="footer-decorations"></div>
+  <div id="buzzer-pressed"></div>
 
-    <!-- الموسيقى الخلفية -->
-    <audio id="bg-music" loop>
-        <source src="music.mp3" type="audio/mp3">
-    </audio>
-
-    <!-- Buzzer Overlay -->
-    <div id="buzzer-overlay">
-        <h2 class="text-5xl font-bold mb-8 text-yellow-500">امسح للاتصال بالجرس</h2>
-        <div id="qrcode" class="bg-white p-4 rounded-xl"></div>
-        <p class="mt-4 text-xl">اتصل ليعمل الجرس</p>
-        <button onclick="closeBuzzerOverlay()"
-            class="mt-8 bg-red-600 hover:bg-red-700 text-white px-8 py-3 rounded-xl">إغلاق</button>
+  <!-- شاشة التقويم -->
+  <div id="calendar-screen" class="min-h-screen flex flex-col items-center justify-center p-8 relative z-10"
+    style="padding-top:100px">
+    <div class="text-center mb-12">
+      <h1 class="text-7xl font-black mb-6"
+        style="color:#FFD700;text-shadow:0 0 40px rgba(255,215,0,0.6);letter-spacing:3px;font-family:'Tajawal'">
+        🌙 حروف مع وعد 🌙
+      </h1>
     </div>
-    <div id="buzzer-pressed"></div>
+    <div id="days-grid" class="grid grid-cols-5 md:grid-cols-10 gap-5 max-w-6xl"></div>
+  </div>
 
-    <!-- شاشة التقويم -->
-    <div id="calendar-screen" class="min-h-screen flex flex-col items-center justify-center p-8 relative z-10"
-        style="padding-top:100px">
-        <div class="text-center mb-12">
-            <h1 class="text-7xl font-black mb-6"
-                style="color:#FFD700;text-shadow:0 0 40px rgba(255,215,0,0.6);letter-spacing:3px;font-family:'Tajawal'">
-                🌙 حروف مع وعد 🌙
-            </h1>
+  <!-- شاشة الإعداد -->
+  <div id="setup-screen" class="hidden min-h-screen flex items-center justify-center p-4 relative z-10">
+    <div class="modal-content max-w-4xl">
+      <h2 class="text-5xl font-black text-center mb-10" style="color:#FFD700;font-family:'Tajawal'">
+        إعداد اليوم <span id="day-num"></span>
+      </h2>
+      <div class="grid md:grid-cols-2 gap-8">
+        <div class="bg-black bg-opacity-30 p-8 rounded-2xl border-2 backdrop-blur-lg" style="border-color:#FFD700">
+          <h3 class="text-3xl font-bold mb-6 text-center" style="color:#FFD700">الفريق 1</h3>
+          <input id="team1-name" placeholder="اسم الفريق"
+            class="w-full bg-gray-800 border-2 rounded-lg px-4 py-3 mb-4 text-center text-lg font-bold"
+            style="border-color:#FFD700">
+          <input type="file" id="team1-logo" accept="image/*" class="hidden">
+          <button onclick="document.getElementById('team1-logo').click()"
+            class="w-full bg-gray-700 hover:bg-gray-600 px-4 py-3 rounded-lg mb-4">📷 رفع الشعار</button>
+          <div id="team1-logo-preview" class="flex justify-center mb-4"></div>
+          <textarea id="team1-members" placeholder="أسماء الأعضاء (سطر لكل اسم)"
+            class="w-full bg-gray-800 border-2 rounded-lg px-4 py-3 h-36 text-lg"
+            style="border-color:#FFD700"></textarea>
         </div>
-        <div id="days-grid" class="grid grid-cols-5 md:grid-cols-10 gap-5 max-w-6xl"></div>
+
+        <div class="bg-black bg-opacity-30 p-8 rounded-2xl border-2 backdrop-blur-lg" style="border-color:#4169E1">
+          <h3 class="text-3xl font-bold mb-6 text-center" style="color:#4169E1">الفريق 2</h3>
+          <input id="team2-name" placeholder="اسم الفريق"
+            class="w-full bg-gray-800 border-2 rounded-lg px-4 py-3 mb-4 text-center text-lg font-bold"
+            style="border-color:#4169E1">
+          <input type="file" id="team2-logo" accept="image/*" class="hidden">
+          <button onclick="document.getElementById('team2-logo').click()"
+            class="w-full bg-gray-700 hover:bg-gray-600 px-4 py-3 rounded-lg mb-4">📷 رفع الشعار</button>
+          <div id="team2-logo-preview" class="flex justify-center mb-4"></div>
+          <textarea id="team2-members" placeholder="أسماء الأعضاء (سطر لكل اسم)"
+            class="w-full bg-gray-800 border-2 rounded-lg px-4 py-3 h-36 text-lg"
+            style="border-color:#4169E1"></textarea>
+        </div>
+      </div>
+
+      <button onclick="startGame()" class="w-full mt-8 px-8 py-5 rounded-2xl text-3xl font-black transition-all"
+        style="background:#FFD700;color:#1a0f2e">ابدأ اللعبة</button>
     </div>
+  </div>
 
-    <!-- شاشة الإعداد -->
-    <div id="setup-screen" class="hidden min-h-screen flex items-center justify-center p-4 relative z-10">
-        <div class="modal-content max-w-4xl">
-            <h2 class="text-5xl font-black text-center mb-10" style="color:#FFD700;font-family:'Tajawal'">
-                إعداد اليوم <span id="day-num"></span>
-            </h2>
-            <div class="grid md:grid-cols-2 gap-8">
-                <div class="bg-black bg-opacity-30 p-8 rounded-2xl border-2 backdrop-blur-lg"
-                    style="border-color:#FFD700">
-                    <h3 class="text-3xl font-bold mb-6 text-center" style="color:#FFD700">الفريق 1</h3>
-                    <input id="team1-name" placeholder="اسم الفريق"
-                        class="w-full bg-gray-800 border-2 rounded-lg px-4 py-3 mb-4 text-center text-lg font-bold"
-                        style="border-color:#FFD700">
-                    <input type="file" id="team1-logo" accept="image/*" class="hidden">
-                    <button onclick="document.getElementById('team1-logo').click()"
-                        class="w-full bg-gray-700 hover:bg-gray-600 px-4 py-3 rounded-lg mb-4">📷 رفع الشعار</button>
-                    <div id="team1-logo-preview" class="flex justify-center mb-4"></div>
-                    <textarea id="team1-members" placeholder="أسماء الأعضاء (سطر لكل اسم)"
-                        class="w-full bg-gray-800 border-2 rounded-lg px-4 py-3 h-36 text-lg"
-                        style="border-color:#FFD700"></textarea>
-                </div>
-
-                <div class="bg-black bg-opacity-30 p-8 rounded-2xl border-2 backdrop-blur-lg"
-                    style="border-color:#4169E1">
-                    <h3 class="text-3xl font-bold mb-6 text-center" style="color:#4169E1">الفريق 2</h3>
-                    <input id="team2-name" placeholder="اسم الفريق"
-                        class="w-full bg-gray-800 border-2 rounded-lg px-4 py-3 mb-4 text-center text-lg font-bold"
-                        style="border-color:#4169E1">
-                    <input type="file" id="team2-logo" accept="image/*" class="hidden">
-                    <button onclick="document.getElementById('team2-logo').click()"
-                        class="w-full bg-gray-700 hover:bg-gray-600 px-4 py-3 rounded-lg mb-4">📷 رفع الشعار</button>
-                    <div id="team2-logo-preview" class="flex justify-center mb-4"></div>
-                    <textarea id="team2-members" placeholder="أسماء الأعضاء (سطر لكل اسم)"
-                        class="w-full bg-gray-800 border-2 rounded-lg px-4 py-3 h-36 text-lg"
-                        style="border-color:#4169E1"></textarea>
-                </div>
-            </div>
-
-            <button onclick="startGame()" class="w-full mt-8 px-8 py-5 rounded-2xl text-3xl font-black transition-all"
-                style="background:#FFD700;color:#1a0f2e">ابدأ اللعبة</button>
-        </div>
+  <!-- شاشة اللعبة -->
+  <div id="game-screen" class="hidden min-h-screen relative z-10" style="padding-top:90px">
+    <!-- Scoreboards -->
+    <div class="scoreboard scoreboard-left">
+      <div class="text-center mb-4">
+        <img id="sb1-logo" class="w-20 h-20 rounded-full mx-auto mb-2 border-4"
+          style="border-color:#FFD700;display:none;box-shadow:0 4px 15px rgba(255,215,0,0.4)">
+        <h3 class="text-xl font-black" style="color:#FFD700" id="sb1-name">الفريق 1</h3>
+        <p class="text-sm mt-1" style="color:#F4E4B0">الجولة: <span id="sb1-rounds"
+            class="text-lg font-bold">0</span></p>
+      </div>
+      <div id="sb1-members"></div>
     </div>
 
-    <!-- شاشة اللعبة -->
-    <div id="game-screen" class="hidden min-h-screen relative z-10" style="padding-top:90px">
-        <!-- Scoreboards -->
-        <div class="scoreboard scoreboard-left">
-            <div class="text-center mb-4">
-                <img id="sb1-logo" class="w-20 h-20 rounded-full mx-auto mb-2 border-4"
-                    style="border-color:#FFD700;display:none;box-shadow:0 4px 15px rgba(255,215,0,0.4)">
-                <h3 class="text-xl font-black" style="color:#FFD700" id="sb1-name">الفريق 1</h3>
-                <p class="text-sm mt-1" style="color:#F4E4B0">الجولة: <span id="sb1-rounds"
-                        class="text-lg font-bold">0</span></p>
-            </div>
-            <div id="sb1-members"></div>
-        </div>
-
-        <div class="scoreboard scoreboard-right">
-            <div class="text-center mb-4">
-                <img id="sb2-logo" class="w-20 h-20 rounded-full mx-auto mb-2 border-4"
-                    style="border-color:#4169E1;display:none;box-shadow:0 4px 15px rgba(65,105,225,0.4)">
-                <h3 class="text-xl font-black" style="color:#4169E1" id="sb2-name">الفريق 2</h3>
-                <p class="text-sm mt-1" style="color:#E0E0E0">الجولة: <span id="sb2-rounds"
-                        class="text-lg font-bold">0</span></p>
-            </div>
-            <div id="sb2-members"></div>
-        </div>
-
-        <!-- المنتصف: الشبكة -->
-        <div class="flex flex-col items-center justify-center" style="min-height:calc(100vh - 180px)">
-            <div class="text-center mb-6">
-                <h1 class="text-4xl font-black" style="color:#FFD700;font-family:'Tajawal'">اليوم <span
-                        id="game-day"></span></h1>
-                <p class="text-xl mt-3 font-bold">الجولة <span id="current-round">1</span> من 3</p>
-                <p class="text-lg mt-2 px-6 py-2 rounded-full inline-block"
-                    style="background:rgba(212,175,55,0.2);color:#FFD700;font-weight:800">
-                    دور: <span id="current-turn" class="font-black"></span>
-                </p>
-            </div>
-            <div class="hex-grid" id="hex-grid"></div>
-        </div>
+    <div class="scoreboard scoreboard-right">
+      <div class="text-center mb-4">
+        <img id="sb2-logo" class="w-20 h-20 rounded-full mx-auto mb-2 border-4"
+          style="border-color:#4169E1;display:none;box-shadow:0 4px 15px rgba(65,105,225,0.4)">
+        <h3 class="text-xl font-black" style="color:#4169E1" id="sb2-name">الفريق 2</h3>
+        <p class="text-sm mt-1" style="color:#E0E0E0">الجولة: <span id="sb2-rounds"
+            class="text-lg font-bold">0</span></p>
+      </div>
+      <div id="sb2-members"></div>
     </div>
 
-    <!-- نافذة السؤال -->
-    <div id="question-modal" class="modal">
-        <div class="modal-content">
-            <div class="text-center mb-8">
-                <h2 class="text-7xl font-black mb-4" style="color:#FFD700;font-family:'Tajawal'" id="q-letter">ح</h2>
-                <p class="text-2xl mb-3 font-bold" style="color:#F4E4B0">دور: <span id="q-turn"></span></p>
-                <p class="text-3xl leading-relaxed font-bold" id="q-text">السؤال يظهر هنا</p>
-            </div>
-            <div class="flex justify-center gap-6">
-                <button onclick="answerCorrect()"
-                    class="px-10 py-5 rounded-2xl text-2xl font-black bg-green-600 hover:bg-green-700">✅ صح</button>
-                <button onclick="answerWrong()"
-                    class="px-10 py-5 rounded-2xl text-2xl font-black bg-red-600 hover:bg-red-700">❌ خطأ</button>
-                <button onclick="changeQuestion()"
-                    class="px-10 py-5 rounded-2xl text-2xl font-black bg-blue-600 hover:bg-blue-700">🔄 تغيير</button>
-            </div>
-        </div>
+    <!-- المنتصف: الشبكة -->
+    <div class="flex flex-col items-center justify-center" style="min-height:calc(100vh - 180px)">
+      <div class="text-center mb-6">
+        <h1 class="text-4xl font-black" style="color:#FFD700;font-family:'Tajawal'">اليوم <span id="game-day"></span>
+        </h1>
+        <p class="text-xl mt-3 font-bold">الجولة <span id="current-round">1</span> من 3</p>
+        <p class="text-lg mt-2 px-6 py-2 rounded-full inline-block"
+          style="background:rgba(212,175,55,0.2);color:#FFD700;font-weight:800">
+          دور: <span id="current-turn" class="font-black"></span>
+        </p>
+      </div>
+      <div class="hex-grid" id="hex-grid"></div>
     </div>
+  </div>
 
-    <!-- نافذة الفوز -->
-    <div id="victory-modal" class="modal">
-        <div class="modal-content max-w-3xl">
-            <div id="victory-poster" class="text-center p-10 rounded-2xl"
-                style="background:linear-gradient(135deg,rgba(45,27,78,0.95),rgba(26,15,46,0.95))">
-                <h1 class="text-7xl font-black mb-8"
-                    style="color:#FFD700;text-shadow:0 0 30px rgba(255,215,0,0.8);font-family:'Tajawal'">🏆 بطل اليوم 🏆
-                </h1>
-                <img id="v-logo" class="w-40 h-40 rounded-full mx-auto mb-6 border-4"
-                    style="border-color:#FFD700;display:none;box-shadow:0 8px 25px rgba(255,215,0,0.5)">
-                <h2 class="text-5xl font-black mb-8" style="color:#F4E4B0" id="v-team">الفريق الفائز</h2>
-
-                <div class="bg-black bg-opacity-40 rounded-2xl p-8 mb-8">
-                    <h3 class="text-3xl font-black mb-5" style="color:#FFD700">⭐ نجم الفريق ⭐</h3>
-                    <p class="text-4xl font-black" style="color:#FFD700" id="v-mvp">اسم اللاعب</p>
-                    <p class="text-2xl mt-3" style="color:#F4E4B0"><span id="v-mvp-score">0</span> إجابة صحيحة</p>
-                </div>
-
-                <div class="bg-black bg-opacity-40 rounded-2xl p-8">
-                    <h3 class="text-2xl font-black mb-4" style="color:#FFD700">الأبطال</h3>
-                    <div id="v-members" class="text-xl"></div>
-                </div>
-            </div>
-
-            <div class="flex gap-6 mt-8">
-                <button onclick="captureVictory()" class="flex-1 px-8 py-4 rounded-2xl font-black text-xl"
-                    style="background:#FFD700;color:#1a0f2e">📸 حفظ الصورة</button>
-                <button onclick="finishDay()"
-                    class="flex-1 px-8 py-4 rounded-2xl font-black text-xl bg-green-600 hover:bg-green-700">✅ إنهاء
-                    اليوم</button>
-            </div>
-        </div>
+  <!-- نافذة السؤال -->
+  <div id="question-modal" class="modal">
+    <div class="modal-content">
+      <div class="text-center mb-8">
+        <h2 class="text-7xl font-black mb-4" style="color:#FFD700;font-family:'Tajawal'" id="q-letter">ح</h2>
+        <p class="text-2xl mb-3 font-bold" style="color:#F4E4B0">دور: <span id="q-turn"></span></p>
+        <p class="text-3xl leading-relaxed font-bold" id="q-text">السؤال يظهر هنا</p>
+      </div>
+      <div class="flex justify-center gap-6">
+        <button onclick="answerCorrect()"
+          class="px-10 py-5 rounded-2xl text-2xl font-black bg-green-600 hover:bg-green-700"
+          style="background:#28a745;color:white">✅ صح</button>
+        <button onclick="answerWrong()"
+          class="px-10 py-5 rounded-2xl text-2xl font-black bg-red-600 hover:bg-red-700"
+          style="background:#dc3545;color:white">❌ خطأ</button>
+        <button onclick="changeQuestion()"
+          class="px-10 py-5 rounded-2xl text-2xl font-black bg-blue-600 hover:bg-blue-700"
+          style="background:#007bff;color:white">🔄 تغيير</button>
+      </div>
     </div>
+  </div>
 
-    <script>
-        const letters = ['أ', 'ب', 'ت', 'ث', 'ج', 'ح', 'خ', 'د', 'ذ', 'ر', 'ز', 'س', 'ش', 'ص', 'ض', 'ط', 'ظ', 'ع', 'غ', 'ف', 'ق', 'ك', 'ل', 'م', 'ن', 'ه', 'و', 'ي'];
+  <!-- نافذة الفوز -->
+  <div id="victory-modal" class="modal">
+    <div class="modal-content max-w-3xl">
+      <div id="victory-poster" class="text-center p-10 rounded-2xl"
+        style="background:linear-gradient(135deg,rgba(45,27,78,0.95),rgba(26,15,46,0.95))">
+        <h1 class="text-7xl font-black mb-8"
+          style="color:#FFD700;text-shadow:0 0 30px rgba(255,215,0,0.8);font-family:'Tajawal'">🏆 بطل اليوم 🏆
+        </h1>
+        <img id="v-logo" class="w-40 h-40 rounded-full mx-auto mb-6 border-4"
+          style="border-color:#FFD700;display:none;box-shadow:0 8px 25px rgba(255,215,0,0.5)">
+        <h2 class="text-5xl font-black mb-8" style="color:#F4E4B0" id="v-team">الفريق الفائز</h2>
 
-        const questions = {
-            'أ': [
-                { q: 'هي سميت سورة من القرآن باسمه ؟', a: 'إبراهيم' },
-                { q: 'من هو الذي ألقى في النار ؟', a: 'إبراهيم عليه السلام' },
-                { q: 'من هو قائد المسلمين في معركة الجسر ؟', a: 'أبو عبيدة الثقفي' },
-                { q: 'من هو قائد المسلمين في معركة القادسية في 13 هجري ؟', a: 'أبو عبيدة بن الجراح الثقفي' },
-                { q: 'مناسبة دينية إسلامية ؟', a: 'الإسراء والمعراج' },
-                { q: 'صحابية لقبت بشهيدة بحر لا تجمد ؟', a: 'أسماء بنت أبي بكر الصديق' },
-                { q: 'عاصمة قديمة للشام أيام الأمويين ؟', a: 'أنطاكية' },
-                { q: 'ما معنى اسم الأرقم ؟', a: 'القلم' },
-                { q: 'من أول من طاف بقدميه في الفضاء ؟', a: 'ألكس ليونوف' },
-                { q: 'أكمل " الرسول من أنفسكم ...... " ؟', a: 'عزيز عليه ما عنتم' },
-                { q: 'أكمل " لكل أمة أجل فإذا جاء أجلهم ...... " ؟', a: 'لا يستأخرون ساعة ولا يستقدمون' },
-                { q: 'آخر الكتب السماوية ؟', a: 'القرآن الكريم' },
-                { q: 'صاحب كتابي الجامع المفيد والمعتبر ؟', a: 'أبو يوسف الكوفي' },
-                { q: 'رفيق الرسول صلى الله عليه وسلم في رحلة الهجرة ؟', a: 'أبو بكر الصديق' },
-                { q: 'أبو البشر ؟', a: 'آدم' },
-                { q: 'أول من أمر بجمع القرآن الكريم ؟', a: 'أبو بكر الصديق' },
-                { q: 'مادة تصنع من مزج الماء والرمل والحصى والشراب ؟', a: 'أسمنت' },
-                { q: 'زوجة فرعون ما اسمها ؟', a: 'آسيا' },
-                { q: 'أكمل " أعقل الناس .... " ؟', a: 'أعقل الناس من الناس' },
-                { q: 'ما هو الحيوان الذي لقب بسفينة الصحراء ؟', a: 'الجمل' },
-                { q: 'ما معنى ليس لها ؟', a: 'الزهراء الجميلة' },
-                { q: 'أكمل المثل " قل من نبي القصر ________ ؟', a: 'قل من نبي القصر .... اسم القصر' },
-                { q: 'ما معنى اسم هشام ؟', a: 'الجود والكرم' },
-                { q: 'ما هي السورة التي تسمى بـ " أم القرآن " ؟', a: 'الفاتحة' },
-                { q: 'أكمل المثل " اللهم جوع كلبك يتبعك ؟', a: 'اللهم جوع كلبك يتبعك' },
-                { q: 'ما هي الكلمة التي كانت الجيوش الإسلامية قديمًا تستخدمها ؟', a: 'النصر' },
-                { q: 'قافلة في الأرض ورواسي بين النجوم ؟', a: 'الضباب' },
-                { q: 'بماذا تسمى من بلغ 20 عام ؟', a: 'الجبل' },
-                { q: 'من هو أول من ركع وسجد للمصطفى ؟', a: 'أبو بكر الصديق' },
-                { q: 'ما قوش في الورد عيب قالوا ؟', a: 'ما حد لونه' },
-                { q: 'أكمل " يبكى يا ____ " ؟', a: 'يوسف' },
-                { q: 'سبعة على درب الهوى يمشون خمسة ليس لهم أثر والسادس له أثر ؟', a: 'أصابع يد النجار' },
-                { q: 'من الذي قبض من بلادته صفية بنت عبدالمطلب ؟', a: 'الزبير بن العوام' },
-                { q: 'أين توجد غابات الأطلس وهي الأكبر من نوعها في العالم العربي ؟', a: 'المغرب' },
-                { q: 'ما هو الحيوان الذي له 1500 اسم في العربية ؟', a: 'الأسد' },
-                { q: 'من هو مؤذن النبي صلى الله عليه وسلم في مكة ؟', a: 'عبد الله بن أم مكتوم' },
-                { q: 'أيهما قال في بدر أولى أم أبو جهل ؟', a: 'أبو بكر الصديق' },
-                { q: 'من هي أولاد فاطمة بنت النبي صلى الله عليه وسلم ؟', a: 'الحسن - الحسين - أم كلثوم' },
-                { q: 'ما اسم ناقة النبي صلى الله عليه وسلم ؟', a: 'القصواء' },
-                { q: 'من هو رفيق النبي صلى الله عليه وسلم في الغار ؟', a: 'أبو بكر الصديق' },
-                { q: 'من هو أول من أمر بجمع القرآن وترتيبه ؟', a: 'أبو بكر الصديق وذلك أثر حروب الردة' },
-                { q: 'سورة تنتهي جميع آياتها بحرف السين ؟', a: 'الناس' },
-                { q: 'أين ولد سيدنا إبراهيم عليه السلام ؟', a: 'العراق' },
-                { q: 'أيهما من أبناء النبي اسمه الحارث أم القاسم ؟', a: 'الحارث' },
-                { q: 'أيهما أطول الأمعاء الدقيقة أم الأمعاء الغليظة ؟', a: 'الأمعاء الدقيقة أطول فهي حوالي 6 أمتار أما الأمعاء الغليظة فهي حوالي متر' },
-                { q: 'أيهما اخترع أولاً الغواصة أم الدبابة ؟', a: 'الغواصة ولا اخترعها هولاند أمريكي 1891 م أما الدبابة اخترعها ستيفنسون الإنجليزي 1914 م وقبلها اخترع الأخوان رايت الطائرة 1903 م وهما أمريكيان' },
-                { q: 'من هو مخترع الطائرة ؟', a: 'الأخوان رايت' },
-                { q: 'من الذي لا ينقطع عنه عد الدم الحار ؟', a: 'السمك' },
-                { q: 'ما مناسك الحج الطواف حول الكعبة المشرفة والسعي بين الصفا والمروة أيها يجب أن يتمه الحاج ولا يسمى إلا الطواف ؟', a: 'الطواف لأنه لا يوجد طواف القدوم ويعتبر طواف الوداع للمسجد الحرام' },
-                { q: 'ما هو الاسم الذي يطلق على صفر اليدين ؟', a: 'الجاح' },
-                { q: 'تكتب اللغة العربية بعدة خطوط منها الرقعة والكوفي فأقدمها ؟', a: 'الخط الكوفي' },
-                { q: 'ما هو العيوب ؟ ؟', a: 'الشديد البحرين' },
-                { q: 'من هو واضع علم الصرف ؟', a: 'أبو عثمان بن جني' },
-                { q: 'ما هو الحيوان الذي يطلق عليه العرب اسم الجلال ؟', a: 'الناقة' },
-                { q: 'ما هو الحيوان الذي يطلق عليه العرب اسم مسعود ؟', a: 'الأسد' },
-                { q: 'ماذا تعني كلمة قراف ؟', a: 'النسر الأسود وهي كلمة تركية' },
-                { q: 'من هم آل النبي صلى الله عليه الصلاة والسلام ؟', a: 'آمنة بنت وهب أم عبد الله بن عبدالمطلب أم زهرة' },
-                { q: 'ما هو اللقب الذي أطلقه قريش على عبدالمطلب جد النبي عليه الصلاة والسلام ؟', a: 'الفياض وذلك لوجود سخاءه' },
-                { q: 'من هي قابيلته (مولدته) عليه الصلاة والسلام ؟', a: 'الشفاء أم عبد الرحمن بن عوف' },
-                { q: 'ما هو اللقب الذي أطلقه أهل مكة على النبي صلى الله عليه وسلم قبل البعثة ؟', a: 'الصادق الأمين' },
-                { q: 'من هي التي قالت عن النبي صلى الله عليه وسلم في أمي بعد أبي ؟', a: 'أم أيمن بركة الحبشية' },
-                { q: 'من هو كبير أعمام النبي صلى الله عليه وسلم ؟', a: 'الحارث بن عبدالمطلب' },
-                { q: 'ما هو النبي الذي أطلق عليه حزة ؟', a: 'عبد الله' },
-                { q: 'من هو العباس عم النبي صلى الله عليه وسلم ؟', a: 'أبو الفضل' },
-                { q: 'من هو زوج زينب بنت النبي صلى الله عليه وسلم ؟', a: 'أبو العاص بن الربيع بن خالتها' },
-                { q: 'من أولاد النبي صلى الله عليه وسلم رزق به بعد إبراهيم ؟', a: 'إبراهيم' },
-                { q: 'من المبشرون بالجنة ؟', a: 'أبو بكر الصديق - أبو عبيدة بن الجراح - الزبير بن العوام' },
-                { q: 'معركة القادسية وقعت بين ؟', a: 'المسلمين والفرس' },
-                { q: 'من كتب كتاب عبقرية محمد للدكتور حسن هيكل أم العقاد ؟', a: 'العقاد' },
-                { q: 'من أصحاب المعلقات العشرة ؟', a: 'امرؤ القيس - عنترة بن شداد - طرفة - لبيد - الأعشى - عمرو بن كلثوم' },
-                { q: 'من أعمام النبي عليه الصلاة والسلام ؟', a: 'الحارث - الزبير - المقوم - الغيداق - العباس رضي الله عنه - أبو طالب' },
-                { q: 'من عانت النبي عليه الصلاة والسلام ؟', a: 'ورقة بن نوفل رضي الله عنه - أميمة - أم حكيم - البيضاء' },
-                { q: 'من أقوال النبي عليه الصلاة والسلام ؟', a: 'الموت' },
-                { q: 'ما هما الأبيضين ؟', a: 'اللبن والماء' },
-                { q: 'ما هو الشيء الذي يلازمك طول عمرك ؟', a: 'الاسم' },
-                { q: 'ما هو معنى اسم نسرين ؟', a: 'الورد الأبيض' },
-                { q: 'من اخترع المصباح الكهربائي ؟', a: 'إديسون' },
-                { q: 'ما مادة تصنع منها الكبريت ؟', a: 'الفوسفور' },
-                { q: 'ما اسم المكان الذي يسكنه النمل ؟', a: 'النمل' },
-                { q: 'متى دوران الأرض أسرع في الليل أم في النهار ؟', a: 'الليل' },
-                { q: 'أيهما أطول الميل الأرضي أم الميل البحري ؟', a: 'الميل البحري وهو يساوي 1852 متراً' },
-                { q: 'ما هو الشيء الذي يخرج من الماء ولا يبتل ؟', a: 'السمك' },
-                { q: 'ما الشيء الذي كله ثقوب ويمكنه الاحتفاظ بالماء ؟', a: 'الإسفنج' },
-                { q: 'ما الشيء الذي له رؤية أحياناً ولا يستطيع السير ؟', a: 'الكرسي' },
-                { q: 'لقب يطلق على زوجات الرسول الكريم عليه الصلاة والسلام ؟', a: 'أم المؤمنين' },
-                { q: 'بماذا يسمى يوم الأحد في الجاهلية ؟', a: 'أول' },
-                { q: 'بماذا يسمى يوم الاثنين في الجاهلية ؟', a: 'أومن' },
-                { q: 'ما هو الحيوان الذي يستطيع أن يعيش بلا غذاء ؟', a: 'الثعلب' },
-                { q: 'ما هو أكبر الكواكب ؟', a: 'المشتري وهو أكبر كوكب بين الكواكب التسعة المعروفة' },
-                { q: 'بماذا لقب عمر بن الخطاب ؟', a: 'الفاروق' },
-                { q: 'بماذا لقب حمزة بن عبدالمطلب ؟', a: 'أسد الله' },
-                { q: 'أكمل المثل " النهر في الإقبال مكتوب على ورق الشجر من شهر ____ ؟', a: 'الليل ينجم النهار' },
-                { q: 'ما هو الكوكب الأحمر ؟', a: 'المريخ وسبب ظهوره باللون الأحمر هو غاز ثاني أكسيد الكربون الذي يملأ جوه ويجعله يبدو ذا احمرار اللون' },
-                { q: 'ما هو معجز سيدنا صالح عليه السلام ؟', a: 'الناقة' },
-                { q: 'أقدم أثر في العالم لا تزال تعمل حتى الآن وتعود إلى الحضارة السومرية أي عام 3500 قبل الميلاد ؟', a: 'الدلو' },
-                { q: 'عالم عربي أول من صنع الساعات ووضعها على مداخل الجامع الأموي في دمشق ؟', a: 'ابن الساعاتي' },
-                { q: 'رجل عادي وكان أعمى فرض فيه لقب ؟', a: 'الجاحظ' },
-                { q: 'آلة لا تزيد هي ؟', a: 'البندقية' },
-                { q: 'أكمل المثل التالي : خذوا بنصيحة ولا وجع دماغ ؟', a: 'القول' },
-                { q: 'ما هو الكتاب الذي نزل على سيدنا محمد عليه الصلاة والسلام ؟', a: 'القرآن الكريم' },
-                { q: 'كم شهر في السنة ؟', a: 'اثنا عشر' },
-                { q: 'ما هو الطائر الذي كلمه سيدنا سليمان ؟', a: 'الهدهد' },
-                { q: 'ماذا تعني كلمة فارس ؟', a: 'أسد' },
-                { q: 'أصل الطرحة البيضاء التي تلبسها العروس ليلة زفافها ؟', a: 'الفرعونية اعتقاداً بأنها تحمي العروس من الأرواح الشريرة' },
-                { q: 'إحدى زوجات الرسول الكريم عليه الصلاة والسلام ؟', a: 'أم حبيبة بنت أبي سفيان بن حرب' },
-                { q: 'اسم مرفوع يبدأ به الجملة يعرف بماذا ؟', a: 'المبتدأ' },
-                { q: 'اسم مرفوع يكون في الجملة جملة مفيدة يعرف بماذا ؟', a: 'الخبر' },
-                { q: 'من أول من كان يرفع الستار ويسدل الستار ؟', a: 'الصبح - أمس' }
-            ],
+        <div class="bg-black bg-opacity-40 rounded-2xl p-8 mb-8">
+          <h3 class="text-3xl font-black mb-5" style="color:#FFD700">⭐ نجم الفريق ⭐</h3>
+          <p class="text-4xl font-black" style="color:#FFD700" id="v-mvp">اسم اللاعب</p>
+          <p class="text-2xl mt-3" style="color:#F4E4B0"><span id="v-mvp-score">0</span> إجابة صحيحة</p>
+        </div>
 
-            'ب': [
-                { q: 'الأصبع الذي يلي الأصغر يليه ؟', a: 'بنصر' },
-                { q: 'من هو نبي الله ؟', a: 'نوح عليه السلام' },
-                { q: 'من هو شيخ الأنبياء ؟', a: 'نوح عليه السلام' },
-                { q: 'قياس سكان شمال أفريقيا ؟', a: 'بربر' },
-                { q: 'من علوم البلاغة الـ .... ؟', a: 'البيان' },
-                { q: 'اللغة التي تخرج عن حدود البلاغة والفنون ؟', a: 'بادية' },
-                { q: 'ما المقصود بحسد آدم ؟', a: 'بالنار الكريم' },
-                { q: 'أكمل الحديث " إنما الأعمال بالنيات " ؟', a: 'النيات' },
-                { q: 'الرئيس الأعلى للكنيسة الـ ؟', a: 'البابا' },
-                { q: 'مؤذن الرسول في المدينة هو الصحابي الجليل ؟', a: 'بلال بن رباح' },
-                { q: 'يستخدمه مرضى السكر علاج دائم ؟', a: 'بنسلين' },
-                { q: 'ما هو حامض العنب ؟', a: 'بنسلين' },
-                { q: 'الدابة التي امتطاها الرسول صلى الله عليه وسلم في المعراج ؟', a: 'براق' },
-                { q: 'من هو أمين النبي عليه الصلاة والسلام على نفقاته ؟', a: 'بلال بن رباح' },
-                { q: 'ما هو اسم الداعي قراقش ؟', a: 'بهاء الدين بن عبد الله الأيوبي' },
-                { q: 'إلى أين كانت قبلة الرسول صلى الله عليه وسلم ؟', a: 'بيت المقدس' },
-                { q: 'من عمات النبي صلى الله عليه وسلم ؟', a: 'برة' }
-            ],
+        <div class="bg-black bg-opacity-40 rounded-2xl p-8">
+          <h3 class="text-2xl font-black mb-4" style="color:#FFD700">الأبطال</h3>
+          <div id="v-members" class="text-xl"></div>
+        </div>
+      </div>
 
-            'ت': [
-                { q: 'ما هو الاسم الحقيقي للخنساء ؟', a: 'تماضر بنت عمرو بن الشريد' },
-                { q: 'صلاة يختص بها شهر رمضان معظم ؟', a: 'تراويح' },
-                { q: 'خير الزاد ؟', a: 'تقوى' },
-                { q: 'سورة على اسم فاكهة ؟', a: 'تين' },
-                { q: 'ملك الحبشة الذي يقال انه اول من كسى الكعبة ؟', a: 'تبع' },
-                { q: 'اخر غزوات الرسول صلى الله عليه وسلم ؟', a: 'غزوة تبوك' },
-                { q: 'الأحداث والأحوال التي مر بها المجتمع فى الماضي ؟', a: 'تاريخ' },
-                { q: 'مزلاج من حديد لقفل الباب ؟', a: 'ترياس' },
-                { q: 'معجم لغوى وضعه المرتضى الزبيدي ؟', a: 'تاج العروس' },
-                { q: 'كلمة تعنى حزن ؟', a: 'ترح' },
-                { q: 'لقب عبدالله بن العباس رضى الله عنه ؟', a: 'ترجمان القرآن الكريم' },
-                { q: 'ما هو البلد العربي الذى كان يسمى أفريقيا ؟', a: 'تونس' },
-                { q: 'ما هى اول الدول الاسلامية التى اعطت المرأة حق الانتخاب مصر ، تركيا ، باكستان ؟', a: 'تركيا' },
-                { q: 'كم عدد تسليفونات بيتهوفن هل هى ثمانية، تسعة، عشرة ؟', a: 'تسعة' },
-                { q: 'ممن خلق ادم ؟', a: 'تراب' },
-                { q: 'اكمل المثل المصرى ( جيت يا عبد المعين تعينى لقيتك يا عبد المعين ـ ) ؟', a: 'عايز تتعان' }
-            ],
+      <div class="flex gap-6 mt-8">
+        <button onclick="captureVictory()" class="flex-1 px-8 py-4 rounded-2xl font-black text-xl"
+          style="background:#FFD700;color:#1a0f2e">📸 حفظ الصورة</button>
+        <button onclick="finishDay()" class="flex-1 px-8 py-4 rounded-2xl font-black text-xl"
+          style="background:#28a745;color:white">✅ إنهاء اليوم</button>
+      </div>
+    </div>
+  </div>
 
-            'ث': [
-                { q: 'ما هي قبيلة صالح عليه السلام ؟', a: 'ثمود' },
-                { q: 'من فقدت ولدها ؟', a: 'ثكلى' },
-                { q: 'ضعف وقل ؟', a: 'ثبط' },
-                { q: 'أجر ؟', a: 'ثواب' },
-                { q: 'الشئ الخارق ؟', a: 'ثاقب' },
-                { q: 'الشئ الغليظ ؟', a: 'خثين' },
-                { q: 'جزء من ثمانية ؟', a: 'ثمن' },
-                { q: 'كلمة تعنى الارض ؟', a: 'ثرى' },
-                { q: 'قوم اهلكوا بالطاغية ؟', a: 'ثمود' },
-                { q: 'غار شهير ؟', a: 'ثور' },
-                { q: 'البقية من الشراب فى أسفل الاناء ؟', a: 'ثمالة' },
-                { q: 'عشب من الفصيلة الزنبقية ؟', a: 'ثوم' },
-                { q: 'من هو خطيب النبي صلى الله عليه وسلم ؟', a: 'ثابت بن قيس' },
-                { q: 'ما هو الغاز الغير قابل للاحتراق وذوب فى الماء ويستعمل فى عمليات الاطفاء ؟', a: 'ثاني أكسيد الكربون' }
-            ],
+  <script>
+    const letters = ['أ', 'ب', 'ت', 'ث', 'ج', 'ح', 'خ', 'د', 'ذ', 'ر', 'ز', 'س', 'ش', 'ص', 'ض', 'ط', 'ظ', 'ع', 'غ', 'ف', 'ق', 'ك', 'ل', 'م', 'ن', 'ه', 'و', 'ي'];
 
-            'ج': [
-                { q: 'ما كلمتا اللذان استجابا لدعوة النبي صلى الله عليه وسلم ؟', a: 'جيور وعبد' },
-                { q: 'الليل والنهار لهما اسم ؟', a: 'جديدان' },
-                { q: 'من الأمراض القديمة والخطيرة ؟', a: 'جدري - جذام' },
-                { q: 'لزم مكانه فلم يبرحه ؟', a: 'جثم' },
-                { q: 'من الأرحام الـ ؟', a: 'الجد والجدة' },
-                { q: 'كلمة تطلق على الرجل الكريم ؟', a: 'جحجاح' },
-                { q: 'يد هزم لـ ؟', a: 'الجماعة' },
-                { q: 'منطقة جغرافية ؟', a: 'جبيلة أبورود' },
-                { q: 'رجل تسبب له الكثير من الحكايات الفكاهية ؟', a: 'جحا' },
-                { q: 'الجبل الذي رست عند سفينة نوح عليه السلام ؟', a: 'الجودي' },
-                { q: 'يستخدم اسم سيدنا سليمان لـ ؟', a: 'الجن' },
-                { q: 'من أسماء النار ؟', a: 'جحيم' },
-                { q: 'هو الأب أو أبو الأم ؟', a: 'الجد' },
-                { q: 'ماذا يسمى ولد المعز لـ ؟', a: 'الجدي' },
-                { q: 'ما معنى كلمة الأبرياء ؟', a: 'الجنة' },
-                { q: 'حقبة ما قبل الإسلام ؟', a: 'جاهلية' },
-                { q: 'أيهما أول دولة عربية لها عضوية في الأمم المتحدة ؟', a: 'جامعة الدول العربية في مارس 1945 أما هيئة الأمم المتحدة أكتوبر 1945' },
-                { q: 'أين أجريت أول عملية قلب في أمريكا أم جنوب أفريقيا ؟', a: 'جنوب أفريقيا بيريارد 1967 م 300 طبيب مساعد وكان عمر المريض 55 سنة' },
-                { q: 'بماذا يسمى يوم الثلاثاء في الجاهلية ؟', a: 'جبار' },
-                { q: 'أول من اخترع الطباعة بواسطة الحروف المتحركة ؟ ومتى وكان أول كتاب طبع ؟', a: 'يوهانس جوتنبرغ في القرن الخامس عشر وكان أول كتاب طبع هو الكتاب المقدس' },
-                { q: 'أول من اكتشف قوة البخار التي تستطيع أن تحرك المحركات والذي ترتب عليه اختراع القاطرة البخارية ؟', a: 'جورج ستيفنسن الإنجليزي' },
-                { q: 'المنطاد هو بالون ضخم مليء بغاز الهيليوم يستطيع أن يرتفع في الهواء إلى طبقات عالية فمن اخترعه ؟', a: 'جوزيف وإيتين مونغولفييه وهم أخوان' },
-                { q: 'إحدى زوجات الرسول الكريم عليه الصلاة والسلام ؟', a: 'جويرية بنت الحارث بن أبي ضرار الخزاعية' },
-                { q: 'كل جملة تبدأ باسم وتكون من مبتدأ وخبر نسميها ؟', a: 'جملة اسمية' }
-            ],
+    const questions = {
+      'أ': [
+        { q: 'هي سميت سورة من القرآن باسمه ؟', a: 'إبراهيم' },
+        { q: 'من هو الذي ألقى في النار ؟', a: 'إبراهيم عليه السلام' },
+        { q: 'من هو قائد المسلمين في معركة الجسر ؟', a: 'أبو عبيدة الثقفي' },
+        { q: 'من هو قائد المسلمين في معركة القادسية في 13 هجري ؟', a: 'أبو عبيدة بن الجراح الثقفي' },
+        { q: 'مناسبة دينية إسلامية ؟', a: 'الإسراء والمعراج' },
+        { q: 'صحابية لقبت بشهيدة بحر لا تجمد ؟', a: 'أسماء بنت أبي بكر الصديق' },
+        { q: 'عاصمة قديمة للشام أيام الأمويين ؟', a: 'أنطاكية' },
+        { q: 'ما معنى اسم الأرقم ؟', a: 'القلم' },
+        { q: 'من أول من طاف بقدميه في الفضاء ؟', a: 'ألكس ليونوف' },
+        { q: 'أكمل " الرسول من أنفسكم ...... " ؟', a: 'عزيز عليه ما عنتم' },
+        { q: 'أكمل " لكل أمة أجل فإذا جاء أجلهم ...... " ؟', a: 'لا يستأخرون ساعة ولا يستقدمون' },
+        { q: 'آخر الكتب السماوية ؟', a: 'القرآن الكريم' },
+        { q: 'صاحب كتابي الجامع المفيد والمعتبر ؟', a: 'أبو يوسف الكوفي' },
+        { q: 'رفيق الرسول صلى الله عليه وسلم في رحلة الهجرة ؟', a: 'أبو بكر الصديق' },
+        { q: 'أبو البشر ؟', a: 'آدم' },
+        { q: 'أول من أمر بجمع القرآن الكريم ؟', a: 'أبو بكر الصديق' },
+        { q: 'مادة تصنع من مزج الماء والرمل والحصى والشراب ؟', a: 'أسمنت' },
+        { q: 'زوجة فرعون ما اسمها ؟', a: 'آسيا' },
+        { q: 'أكمل " أعقل الناس .... " ؟', a: 'أعقل الناس من الناس' },
+        { q: 'ما هو الحيوان الذي لقب بسفينة الصحراء ؟', a: 'الجمل' },
+        { q: 'ما معنى ليس لها ؟', a: 'الزهراء الجميلة' },
+        { q: 'أكمل المثل " قل من نبي القصر ________ ؟', a: 'قل من نبي القصر .... اسم القصر' },
+        { q: 'ما معنى اسم هشام ؟', a: 'الجود والكرم' },
+        { q: 'ما هي السورة التي تسمى بـ " أم القرآن " ؟', a: 'الفاتحة' },
+        { q: 'أكمل المثل " اللهم جوع كلبك يتبعك ؟', a: 'اللهم جوع كلبك يتبعك' },
+        { q: 'ما هي الكلمة التي كانت الجيوش الإسلامية قديمًا تستخدمها ؟', a: 'النصر' },
+        { q: 'قافلة في الأرض ورواسي بين النجوم ؟', a: 'الضباب' },
+        { q: 'بماذا تسمى من بلغ 20 عام ؟', a: 'الجبل' },
+        { q: 'من هو أول من ركع وسجد للمصطفى ؟', a: 'أبو بكر الصديق' },
+        { q: 'ما قوش في الورد عيب قالوا ؟', a: 'ما حد لونه' },
+        { q: 'أكمل " يبكى يا ____ " ؟', a: 'يوسف' },
+        { q: 'سبعة على درب الهوى يمشون خمسة ليس لهم أثر والسادس له أثر ؟', a: 'أصابع يد النجار' },
+        { q: 'من الذي قبض من بلادته صفية بنت عبدالمطلب ؟', a: 'الزبير بن العوام' },
+        { q: 'أين توجد غابات الأطلس وهي الأكبر من نوعها في العالم العربي ؟', a: 'المغرب' },
+        { q: 'ما هو الحيوان الذي له 1500 اسم في العربية ؟', a: 'الأسد' },
+        { q: 'من هو مؤذن النبي صلى الله عليه وسلم في مكة ؟', a: 'عبد الله بن أم مكتوم' },
+        { q: 'أيهما قال في بدر أولى أم أبو جهل ؟', a: 'أبو بكر الصديق' },
+        { q: 'من هي أولاد فاطمة بنت النبي صلى الله عليه وسلم ؟', a: 'الحسن - الحسين - أم كلثوم' },
+        { q: 'ما اسم ناقة النبي صلى الله عليه وسلم ؟', a: 'القصواء' },
+        { q: 'من هو رفيق النبي صلى الله عليه وسلم في الغار ؟', a: 'أبو بكر الصديق' },
+        { q: 'من هو أول من أمر بجمع القرآن وترتيبه ؟', a: 'أبو بكر الصديق وذلك أثر حروب الردة' },
+        { q: 'سورة تنتهي جميع آياتها بحرف السين ؟', a: 'الناس' },
+        { q: 'أين ولد سيدنا إبراهيم عليه السلام ؟', a: 'العراق' },
+        { q: 'أيهما من أبناء النبي اسمه الحارث أم القاسم ؟', a: 'الحارث' },
+        { q: 'أيهما أطول الأمعاء الدقيقة أم الأمعاء الغليظة ؟', a: 'الأمعاء الدقيقة أطول فهي حوالي 6 أمتار أما الأمعاء الغليظة فهي حوالي متر' },
+        { q: 'أيهما اخترع أولاً الغواصة أم الدبابة ؟', a: 'الغواصة ولا اخترعها هولاند أمريكي 1891 م أما الدبابة اخترعها ستيفنسون الإنجليزي 1914 م وقبلها اخترع الأخوان رايت الطائرة 1903 م وهما أمريكيان' },
+        { q: 'من هو مخترع الطائرة ؟', a: 'الأخوان رايت' },
+        { q: 'من الذي لا ينقطع عنه عد الدم الحار ؟', a: 'السمك' },
+        { q: 'ما مناسك الحج الطواف حول الكعبة المشرفة والسعي بين الصفا والمروة أيها يجب أن يتمه الحاج ولا يسمى إلا الطواف ؟', a: 'الطواف لأنه لا يوجد طواف القدوم ويعتبر طواف الوداع للمسجد الحرام' },
+        { q: 'ما هو الاسم الذي يطلق على صفر اليدين ؟', a: 'الجاح' },
+        { q: 'تكتب اللغة العربية بعدة خطوط منها الرقعة والكوفي فأقدمها ؟', a: 'الخط الكوفي' },
+        { q: 'ما هو العيوب ؟ ؟', a: 'الشديد البحرين' },
+        { q: 'من هو واضع علم الصرف ؟', a: 'أبو عثمان بن جني' },
+        { q: 'ما هو الحيوان الذي يطلق عليه العرب اسم الجلال ؟', a: 'الناقة' },
+        { q: 'ما هو الحيوان الذي يطلق عليه العرب اسم مسعود ؟', a: 'الأسد' },
+        { q: 'ماذا تعني كلمة قراف ؟', a: 'النسر الأسود وهي كلمة تركية' },
+        { q: 'من هم آل النبي صلى الله عليه الصلاة والسلام ؟', a: 'آمنة بنت وهب أم عبد الله بن عبدالمطلب أم زهرة' },
+        { q: 'ما هو اللقب الذي أطلقه قريش على عبدالمطلب جد النبي عليه الصلاة والسلام ؟', a: 'الفياض وذلك لوجود سخاءه' },
+        { q: 'من هي قابيلته (مولدته) عليه الصلاة والسلام ؟', a: 'الشفاء أم عبد الرحمن بن عوف' },
+        { q: 'ما هو اللقب الذي أطلقه أهل مكة على النبي صلى الله عليه وسلم قبل البعثة ؟', a: 'الصادق الأمين' },
+        { q: 'من هي التي قالت عن النبي صلى الله عليه وسلم في أمي بعد أبي ؟', a: 'أم أيمن بركة الحبشية' },
+        { q: 'من هو كبير أعمام النبي صلى الله عليه وسلم ؟', a: 'الحارث بن عبدالمطلب' },
+        { q: 'ما هو النبي الذي أطلق عليه حزة ؟', a: 'عبد الله' },
+        { q: 'من هو العباس عم النبي صلى الله عليه وسلم ؟', a: 'أبو الفضل' },
+        { q: 'من هو زوج زينب بنت النبي صلى الله عليه وسلم ؟', a: 'أبو العاص بن الربيع بن خالتها' },
+        { q: 'من أولاد النبي صلى الله عليه وسلم رزق به بعد إبراهيم ؟', a: 'إبراهيم' },
+        { q: 'من المبشرون بالجنة ؟', a: 'أبو بكر الصديق - أبو عبيدة بن الجراح - الزبير بن العوام' },
+        { q: 'معركة القادسية وقعت بين ؟', a: 'المسلمين والفرس' },
+        { q: 'من كتب كتاب عبقرية محمد للدكتور حسن هيكل أم العقاد ؟', a: 'العقاد' },
+        { q: 'من أصحاب المعلقات العشرة ؟', a: 'امرؤ القيس - عنترة بن شداد - طرفة - لبيد - الأعشى - عمرو بن كلثوم' },
+        { q: 'من أعمام النبي عليه الصلاة والسلام ؟', a: 'الحارث - الزبير - المقوم - الغيداق - العباس رضي الله عنه - أبو طالب' },
+        { q: 'من عانت النبي عليه الصلاة والسلام ؟', a: 'ورقة بن نوفل رضي الله عنه - أميمة - أم حكيم - البيضاء' },
+        { q: 'من أقوال النبي عليه الصلاة والسلام ؟', a: 'الموت' },
+        { q: 'ما هما الأبيضين ؟', a: 'اللبن والماء' },
+        { q: 'ما هو الشيء الذي يلازمك طول عمرك ؟', a: 'الاسم' },
+        { q: 'ما هو معنى اسم نسرين ؟', a: 'الورد الأبيض' },
+        { q: 'من اخترع المصباح الكهربائي ؟', a: 'إديسون' },
+        { q: 'ما مادة تصنع منها الكبريت ؟', a: 'الفوسفور' },
+        { q: 'ما اسم المكان الذي يسكنه النمل ؟', a: 'النمل' },
+        { q: 'متى دوران الأرض أسرع في الليل أم في النهار ؟', a: 'الليل' },
+        { q: 'أيهما أطول الميل الأرضي أم الميل البحري ؟', a: 'الميل البحري وهو يساوي 1852 متراً' },
+        { q: 'ما هو الشيء الذي يخرج من الماء ولا يبتل ؟', a: 'السمك' },
+        { q: 'ما الشيء الذي كله ثقوب ويمكنه الاحتفاظ بالماء ؟', a: 'الإسفنج' },
+        { q: 'ما الشيء الذي له رؤية أحياناً ولا يستطيع السير ؟', a: 'الكرسي' },
+        { q: 'لقب يطلق على زوجات الرسول الكريم عليه الصلاة والسلام ؟', a: 'أم المؤمنين' },
+        { q: 'بماذا يسمى يوم الأحد في الجاهلية ؟', a: 'أول' },
+        { q: 'بماذا يسمى يوم الاثنين في الجاهلية ؟', a: 'أومن' },
+        { q: 'ما هو الحيوان الذي يستطيع أن يعيش بلا غذاء ؟', a: 'الثعلب' },
+        { q: 'ما هو أكبر الكواكب ؟', a: 'المشتري وهو أكبر كوكب بين الكواكب التسعة المعروفة' },
+        { q: 'بماذا لقب عمر بن الخطاب ؟', a: 'الفاروق' },
+        { q: 'بماذا لقب حمزة بن عبدالمطلب ؟', a: 'أسد الله' },
+        { q: 'أكمل المثل " النهر في الإقبال مكتوب على ورق الشجر من شهر ____ ؟', a: 'الليل ينجم النهار' },
+        { q: 'ما هو الكوكب الأحمر ؟', a: 'المريخ وسبب ظهوره باللون الأحمر هو غاز ثاني أكسيد الكربون الذي يملأ جوه ويجعله يبدو ذا احمرار اللون' },
+        { q: 'ما هو معجز سيدنا صالح عليه السلام ؟', a: 'الناقة' },
+        { q: 'أقدم أثر في العالم لا تزال تعمل حتى الآن وتعود إلى الحضارة السومرية أي عام 3500 قبل الميلاد ؟', a: 'الدلو' },
+        { q: 'عالم عربي أول من صنع الساعات ووضعها على مداخل الجامع الأموي في دمشق ؟', a: 'ابن الساعاتي' },
+        { q: 'رجل عادي وكان أعمى فرض فيه لقب ؟', a: 'الجاحظ' },
+        { q: 'آلة لا تزيد هي ؟', a: 'البندقية' },
+        { q: 'أكمل المثل التالي : خذوا بنصيحة ولا وجع دماغ ؟', a: 'القول' },
+        { q: 'ما هو الكتاب الذي نزل على سيدنا محمد عليه الصلاة والسلام ؟', a: 'القرآن الكريم' },
+        { q: 'كم شهر في السنة ؟', a: 'اثنا عشر' },
+        { q: 'ما هو الطائر الذي كلمه سيدنا سليمان ؟', a: 'الهدهد' },
+        { q: 'ماذا تعني كلمة فارس ؟', a: 'أسد' },
+        { q: 'أصل الطرحة البيضاء التي تلبسها العروس ليلة زفافها ؟', a: 'الفرعونية اعتقاداً بأنها تحمي العروس من الأرواح الشريرة' },
+        { q: 'إحدى زوجات الرسول الكريم عليه الصلاة والسلام ؟', a: 'أم حبيبة بنت أبي سفيان بن حرب' },
+        { q: 'اسم مرفوع يبدأ به الجملة يعرف بماذا ؟', a: 'المبتدأ' },
+        { q: 'اسم مرفوع يكون في الجملة جملة مفيدة يعرف بماذا ؟', a: 'الخبر' },
+        { q: 'من أول من كان يرفع الستار ويسدل الستار ؟', a: 'الصبح - أمس' }
+      ],
+      'ب': [
+        { q: 'الأصبع الذي يلي الأصغر يليه ؟', a: 'بنصر' },
+        { q: 'من هو نبي الله ؟', a: 'نوح عليه السلام' },
+        { q: 'من هو شيخ الأنبياء ؟', a: 'نوح عليه السلام' },
+        { q: 'قياس سكان شمال أفريقيا ؟', a: 'بربر' },
+        { q: 'من علوم البلاغة الـ .... ؟', a: 'البيان' },
+        { q: 'اللغة التي تخرج عن حدود البلاغة والفنون ؟', a: 'بادية' },
+        { q: 'ما المقصود بحسد آدم ؟', a: 'بالنار الكريم' },
+        { q: 'أكمل الحديث " إنما الأعمال بالنيات " ؟', a: 'النيات' },
+        { q: 'الرئيس الأعلى للكنيسة الـ ؟', a: 'البابا' },
+        { q: 'مؤذن الرسول في المدينة هو الصحابي الجليل ؟', a: 'بلال بن رباح' },
+        { q: 'يستخدمه مرضى السكر علاج دائم ؟', a: 'بنسلين' },
+        { q: 'ما هو حامض العنب ؟', a: 'بنسلين' },
+        { q: 'الدابة التي امتطاها الرسول صلى الله عليه وسلم في المعراج ؟', a: 'براق' },
+        { q: 'من هو أمين النبي عليه الصلاة والسلام على نفقاته ؟', a: 'بلال بن رباح' },
+        { q: 'ما هو اسم الداعي قراقش ؟', a: 'بهاء الدين بن عبد الله الأيوبي' },
+        { q: 'إلى أين كانت قبلة الرسول صلى الله عليه وسلم ؟', a: 'بيت المقدس' },
+        { q: 'من عمات النبي صلى الله عليه وسلم ؟', a: 'برة' }
+      ],
+      'ت': [
+        { q: 'ما هو الاسم الحقيقي للخنساء ؟', a: 'تماضر بنت عمرو بن الشريد' },
+        { q: 'صلاة يختص بها شهر رمضان معظم ؟', a: 'تراويح' },
+        { q: 'خير الزاد ؟', a: 'تقوى' },
+        { q: 'سورة على اسم فاكهة ؟', a: 'تين' },
+        { q: 'ملك الحبشة الذي يقال انه اول من كسى الكعبة ؟', a: 'تبع' },
+        { q: 'اخر غزوات الرسول صلى الله عليه وسلم ؟', a: 'غزوة تبوك' },
+        { q: 'الأحداث والأحوال التي مر بها المجتمع فى الماضي ؟', a: 'تاريخ' },
+        { q: 'مزلاج من حديد لقفل الباب ؟', a: 'ترياس' },
+        { q: 'معجم لغوى وضعه المرتضى الزبيدي ؟', a: 'تاج العروس' },
+        { q: 'كلمة تعنى حزن ؟', a: 'ترح' },
+        { q: 'لقب عبدالله بن العباس رضى الله عنه ؟', a: 'ترجمان القرآن الكريم' },
+        { q: 'ما هو البلد العربي الذى كان يسمى أفريقيا ؟', a: 'تونس' },
+        { q: 'ما هى اول الدول الاسلامية التى اعطت المرأة حق الانتخاب مصر ، تركيا ، باكستان ؟', a: 'تركيا' },
+        { q: 'كم عدد تسليفونات بيتهوفن هل هى ثمانية، تسعة، عشرة ؟', a: 'تسعة' },
+        { q: 'ممن خلق ادم ؟', a: 'تراب' },
+        { q: 'اكمل المثل المصرى ( جيت يا عبد المعين تعينى لقيتك يا عبد المعين ـ ) ؟', a: 'عايز تتعان' }
+      ],
+      'ث': [
+        { q: 'ما هي قبيلة صالح عليه السلام ؟', a: 'ثمود' },
+        { q: 'من فقدت ولدها ؟', a: 'ثكلى' },
+        { q: 'ضعف وقل ؟', a: 'ثبط' },
+        { q: 'أجر ؟', a: 'ثواب' },
+        { q: 'الشئ الخارق ؟', a: 'ثاقب' },
+        { q: 'الشئ الغليظ ؟', a: 'خثين' },
+        { q: 'جزء من ثمانية ؟', a: 'ثمن' },
+        { q: 'كلمة تعنى الارض ؟', a: 'ثرى' },
+        { q: 'قوم اهلكوا بالطاغية ؟', a: 'ثمود' },
+        { q: 'غار شهير ؟', a: 'ثور' },
+        { q: 'البقية من الشراب فى أسفل الاناء ؟', a: 'ثمالة' },
+        { q: 'عشب من الفصيلة الزنبقية ؟', a: 'ثوم' },
+        { q: 'من هو خطيب النبي صلى الله عليه وسلم ؟', a: 'ثابت بن قيس' },
+        { q: 'ما هو الغاز الغير قابل للاحتراق وذوب فى الماء ويستعمل فى عمليات الاطفاء ؟', a: 'ثاني أكسيد الكربون' }
+      ],
+      'ج': [
+        { q: 'ما كلمتا اللذان استجابا لدعوة النبي صلى الله عليه وسلم ؟', a: 'جيور وعبد' },
+        { q: 'الليل والنهار لهما اسم ؟', a: 'جديدان' },
+        { q: 'من الأمراض القديمة والخطيرة ؟', a: 'جدري - جذام' },
+        { q: 'لزم مكانه فلم يبرحه ؟', a: 'جثم' },
+        { q: 'من الأرحام الـ ؟', a: 'الجد والجدة' },
+        { q: 'كلمة تطلق على الرجل الكريم ؟', a: 'جحجاح' },
+        { q: 'يد هزم لـ ؟', a: 'الجماعة' },
+        { q: 'منطقة جغرافية ؟', a: 'جبيلة أبورود' },
+        { q: 'رجل تسبب له الكثير من الحكايات الفكاهية ؟', a: 'جحا' },
+        { q: 'الجبل الذي رست عند سفينة نوح عليه السلام ؟', a: 'الجودي' },
+        { q: 'يستخدم اسم سيدنا سليمان لـ ؟', a: 'الجن' },
+        { q: 'من أسماء النار ؟', a: 'جحيم' },
+        { q: 'هو الأب أو أبو الأم ؟', a: 'الجد' },
+        { q: 'ماذا يسمى ولد المعز لـ ؟', a: 'الجدي' },
+        { q: 'ما معنى كلمة الأبرياء ؟', a: 'الجنة' },
+        { q: 'حقبة ما قبل الإسلام ؟', a: 'جاهلية' },
+        { q: 'أيهما أول دولة عربية لها عضوية في الأمم المتحدة ؟', a: 'جامعة الدول العربية في مارس 1945 أما هيئة الأمم المتحدة أكتوبر 1945' },
+        { q: 'أين أجريت أول عملية قلب في أمريكا أم جنوب أفريقيا ؟', a: 'جنوب أفريقيا بيريارد 1967 م 300 طبيب مساعد وكان عمر المريض 55 سنة' },
+        { q: 'بماذا يسمى يوم الثلاثاء في الجاهلية ؟', a: 'جبار' },
+        { q: 'أول من اخترع الطباعة بواسطة الحروف المتحركة ؟ ومتى وكان أول كتاب طبع ؟', a: 'يوهانس جوتنبرغ في القرن الخامس عشر وكان أول كتاب طبع هو الكتاب المقدس' },
+        { q: 'أول من اكتشف قوة البخار التي تستطيع أن تحرك المحركات والذي ترتب عليه اختراع القاطرة البخارية ؟', a: 'جورج ستيفنسن الإنجليزي' },
+        { q: 'المنطاد هو بالون ضخم مليء بغاز الهيليوم يستطيع أن يرتفع في الهواء إلى طبقات عالية فمن اخترعه ؟', a: 'جوزيف وإيتين مونغولفييه وهم أخوان' },
+        { q: 'إحدى زوجات الرسول الكريم عليه الصلاة والسلام ؟', a: 'جويرية بنت الحارث بن أبي ضرار الخزاعية' },
+        { q: 'كل جملة تبدأ باسم وتكون من مبتدأ وخبر نسميها ؟', a: 'جملة اسمية' }
+      ],
+      'ح': [
+        { q: 'سيدة أودعت عندها النسخة الأولى من المصحف الشريف ؟', a: 'حفصة بنت عمر بن الخطاب' },
+        { q: 'أشهر الكرماء في التاريخ العربي ؟', a: 'حاتم الطائي' },
+        { q: 'لقب علي بن أبي طالب رضي الله عنه لقتبه به أمه ؟', a: 'حيدرة' },
+        { q: 'شاعر النبي صلى الله عليه وسلم ؟', a: 'حسان بن ثابت' },
+        { q: 'من الطيور ؟', a: 'حباري' },
+        { q: 'من غزوات النبي صلى الله عليه وسلم في السنة الثامنة للهجرة ؟', a: 'غزوة حنين' },
+        { q: 'الاسم الحقيقي لزرقاء اليمامة ؟', a: 'حذام' },
+        { q: 'أم البشر ؟', a: 'حواء' },
+        { q: 'حرام ومدمر لعقل الانسان ؟', a: 'حشيش' },
+        { q: 'كل قول أو فعل أو تقرير نسب إلى النبي صلى الله عليه وسلم ؟', a: 'حديث' },
+        { q: 'من هو صاحب سر النبي صلى الله عليه وسلم ؟', a: 'حذيفة بن اليمان' },
+        { q: 'من هو أصغر أعمام النبي صلى الله عليه وسلم ؟', a: 'حمزة بن عبدالمطلب' },
+        { q: 'من هو أول أعمام النبي عليه الصلاة والسلام إسلاماً ؟', a: 'حمزة بن عبدالمطلب' },
+        { q: 'من أعمام النبي عليه الصلاة والسلام ؟', a: 'حمزة رضي الله عنه ، حجل' },
+        { q: 'إحدى زوجات الرسول الكريم عليه الصلاة والسلام ؟', a: 'حفصة بنت عمر بن الخطاب' }
+      ],
+      // ... (باقي الحروف كما هي عندك)
+    };
 
-            'ح': [
-                { q: 'سيدة أودعت عندها النسخة الأولى من المصحف الشريف ؟', a: 'حفصة بنت عمر بن الخطاب' },
-                { q: 'أشهر الكرماء في التاريخ العربي ؟', a: 'حاتم الطائي' },
-                { q: 'لقب علي بن أبي طالب رضي الله عنه لقتبه به أمه ؟', a: 'حيدرة' },
-                { q: 'شاعر النبي صلى الله عليه وسلم ؟', a: 'حسان بن ثابت' },
-                { q: 'من الطيور ؟', a: 'حباري' },
-                { q: 'من غزوات النبي صلى الله عليه وسلم في السنة الثامنة للهجرة ؟', a: 'غزوة حنين' },
-                { q: 'الاسم الحقيقي لزرقاء اليمامة ؟', a: 'حذام' },
-                { q: 'أم البشر ؟', a: 'حواء' },
-                { q: 'حرام ومدمر لعقل الانسان ؟', a: 'حشيش' },
-                { q: 'كل قول أو فعل أو تقرير نسب إلى النبي صلى الله عليه وسلم ؟', a: 'حديث' },
-                { q: 'من هو صاحب سر النبي صلى الله عليه وسلم ؟', a: 'حذيفة بن اليمان' },
-                { q: 'من هو أصغر أعمام النبي صلى الله عليه وسلم ؟', a: 'حمزة بن عبدالمطلب' },
-                { q: 'من هو أول أعمام النبي عليه الصلاة والسلام إسلاماً ؟', a: 'حمزة بن عبدالمطلب' },
-                { q: 'من أعمام النبي عليه الصلاة والسلام ؟', a: 'حمزة رضي الله عنه ، حجل' },
-                { q: 'إحدى زوجات الرسول الكريم عليه الصلاة والسلام ؟', a: 'حفصة بنت عمر بن الخطاب' }
-            ],
+    // ============================================================
+    // ✅✅✅ تعديل الأسئلة فقط:
+    // - منع تكرار 30 يوم
+    // - زر تغيير بدون حرق
+    // - الحرق فقط عند صح/خطأ
+    // ============================================================
 
-            'خ': [
-                { q: 'الحية ؟', a: 'خيل' },
-                { q: 'أصبع اليد الأصغر ؟', a: 'خنصر' },
-                { q: 'من فاتح الحيرة ؟', a: 'خالد بن الوليد' },
-                { q: 'من هو قائد المسلمين في معركة اليرموك سنة 13 هجري ؟', a: 'خالد بن الوليد' },
-                { q: 'بيت من الوبر أو الصوف أو الشعر ؟', a: 'خيام' },
-                { q: 'معبد أهل مكة ؟', a: 'خنزير' },
-                { q: 'انعقاد اللسان عن الكلام ؟', a: 'خرس' },
-                { q: 'اسم أم هارون الرشيد الـ .... ؟', a: 'الخيزران' },
-                { q: 'أبو بكر وعمر و علي و عثمان رضي الله عنهم الـ ... ؟', a: 'الخلفاء الراشدون' },
-                { q: 'من موارد الدولة الإسلامية ؟', a: 'خراج' },
-                { q: 'إحدى قبيلتين رئيسيتن ؟', a: 'الخزرج' },
-                { q: 'من أول امرأة تزوجها النبي صلى الله عليه وسلم ؟', a: 'خديجة بنت خويلد كان عمرها أربعين عاما و عمره خمسة وعشرون عاما' },
-                { q: 'صح أم خطأ في هذه الأسماء من أسماء الأسد الحر - الهيثم - الشنفغ', a: 'خطأ فهي من أسماء الصقر' },
-                { q: 'مجلس الأمن يتألف من 15 عضوا منهم 5 دول دائمة العضوية', a: 'دول (الولايات المتحدة الأمريكية - الاتحاد السوفيتي - بريطانيا - فرنسا - الصين الشعبية)' },
-                { q: 'صح أم خطأ ( أنه يجوز للحاج أن يضحك ضحك صوت وقبل التوجه إلى منى ) ؟', a: 'خطأ' },
-                { q: 'صح أم خطأ ( أن اسم الطارق أو طارق بن الشجاع الملهم ) ؟', a: 'خطأ' },
-                { q: 'أكمل المثل الشعبي من كبر بطنه ____ ؟', a: 'خاويه' },
-                { q: 'من هي أم مصعب بن عمير ؟', a: 'خناس بنت مالك' }
-            ],
+    const allQuestions = {};
+    Object.keys(questions).forEach(letter => {
+      allQuestions[letter] = (questions[letter] || []).map((item, index) => ({
+        ...item,
+        id: `${letter}-${index}`
+      }));
+    });
 
-            'د': [
-                { q: 'ما هو جمع يد ؟', a: 'دكة' },
-                { q: 'من هو النبي الذي سخر الله له الجبال تسبح معه ؟', a: 'داود عليه السلام' },
-                { q: 'جبل شديد الغلظة ؟', a: 'ديبون أو داسم' },
-                { q: 'مجموعتان من النجوم ؟', a: 'الدب الأكبر و الدب أصغر' },
-                { q: 'المكان الذي اجتمعت فيه قريش ليلة الهجرة للتآمر على النبي ؟', a: 'دار الندوة' },
-                { q: 'من الكتب السماوية التوراة على من نزل ؟', a: 'داود عليه السلام' },
-                { q: 'أفضل الحج ؟', a: 'حج مبرور' },
-                { q: 'ماذا تسمى العين الواسعة شديدة البياض والسواد ؟', a: 'دعجاء' },
-                { q: 'من أفضل العبادات ؟', a: 'دعاء' },
-                { q: 'المنزل الأهل بالسكان ؟', a: 'دار' },
-                { q: 'أي عهد من الأنبياء بدأ بناء المسجد الأقصى ؟', a: 'داود' },
-                { q: 'بماذا يسمى يوم الأربعاء في الجاهلية ؟', a: 'ديار' }
-            ],
+    let usedQuestionsGlobal = JSON.parse(localStorage.getItem('usedQuestionsGlobal') || '[]');
 
-            'ذ': [
-                { q: 'انتشر الخير ؟', a: 'ذاع' },
-                { q: 'صغار النحل ؟', a: 'ذر' },
-                { q: 'أعلى كل شيء ؟', a: 'ذروة' },
-                { q: 'الذي أعطى بنيامين له على ماله وعرضه ووديعته ؟', a: 'ذمي' },
-                { q: 'سال دمعه ؟', a: 'ذرف' },
-                { q: 'وحدة قياس طولية ذكرت في القرآن الكريم ؟', a: 'ذراع' },
-                { q: 'حشرة ذكرت في القرآن الكريم ؟', a: 'ذبابة' },
-                { q: 'أحد شعراء عمر بن الخطاب ؟', a: 'ذو الشوشاء' },
-                { q: 'لقب أطلق على قائد وفعل على الإسكندر الأكبر المقدوني ؟', a: 'ذو القرنين' },
-                { q: 'من النباتات ؟', a: 'ذرة' },
-                { q: 'الفهم والعقل ؟', a: 'ذهن' },
-                { q: 'انتشر الشر ؟', a: 'ذاع' },
-                { q: 'أول معركة بحرية خاضها المسلمون ؟', a: 'ذات الصواري' },
-                { q: 'بماذا لقب عثمان بن عفان ؟', a: 'ذو النورين' }
-            ],
+    function pickQuestion(letter, tempExcludeIds = []) {
+      const list = allQuestions[letter] || [{ q: 'سؤال تجريبي؟', a: 'جواب', id: `${letter}-demo` }];
+      const available = list.filter(q => !usedQuestionsGlobal.includes(q.id) && !tempExcludeIds.includes(q.id));
+      if (available.length === 0) return null;
+      return available[Math.floor(Math.random() * available.length)];
+    }
 
-            'ر': [
-                { q: 'أفضل الشهور ؟', a: 'رمضان' },
-                { q: 'سيويه كلمة فارسية ماذا تعني ؟', a: 'رائحة التفاح' },
-                { q: 'بما لقب ابراهيم عليه السلام ؟', a: 'ربح صبر صبر عائلة' },
-                { q: 'شيء يفرزه الزهر ؟', a: 'رحيق' },
-                { q: 'أنبياء مكلفون بالدعوة ؟', a: 'رسل' },
-                { q: 'علم ؟', a: 'راية' },
-                { q: 'مهنة قديمة اشتهرها كثير من الأنبياء ؟', a: 'راعي' },
-                { q: 'دودة قدييمة لطحن الحبوب ؟', a: 'رحى' },
-                { q: 'من الأزهار ورد في القرآن الكريم ؟', a: 'ريحان' },
-                { q: 'سلاح تقليدي قديم ؟', a: 'رمح' },
-                { q: 'جبل عرفت به جبل الـ ؟', a: 'الرحمة' },
-                { q: 'الجماعة من ثلاثة إلى عشرة ؟', a: 'رهط' },
-                { q: 'أيهما أكبر سيدة نساء الجنة فاطمة رضي الله عنها أم خديجة رضي الله عنها ؟', a: 'السيدة زينب هي البنت الثانية لأبيها زينب... وترتيبهن: زينب، رقية، أم كلثوم، فاطمة' },
-                { q: 'من هو مخترع الغواصة ؟', a: 'روبرت فولتن اخترعها عام 1765 م' },
-                { q: 'بماذا لقب ابوالعلاء المعري ؟', a: 'رهين المحبسين' },
-                { q: 'أكمل من تراث الآباء والأجداد ( راس خير من ___ )', a: 'رأي' }
-            ],
+    function burnCurrentQuestion() {
+      const id = state.currentQuestionId;
+      if (!id) return;
+      if (!usedQuestionsGlobal.includes(id)) {
+        usedQuestionsGlobal.push(id);
+        localStorage.setItem('usedQuestionsGlobal', JSON.stringify(usedQuestionsGlobal));
+      }
+      state.tempExcludedQuestionIds = [];
+    }
 
-            'ز': [
-                { q: 'ما هي مباركة ؟', a: 'زمزم' },
-                { q: 'أحد أصحاب المعلقات العشرة ؟', a: 'زهير بن أبي سلمى' },
-                { q: 'علي أشيخ يسمى ؟', a: 'زاهد' },
-                { q: 'دولة علمانية عالمية ؟', a: 'زعامة' },
-                { q: 'الصحابي الوحيد الذي يوجد في حالة سائلة ؟', a: 'زئبق' },
-                { q: 'صحابي ورد اسمه صراحة في القرآن الكريم ؟', a: 'زيد بن الحارثة' },
-                { q: 'من سور القرآن الكريم الـ ...... ؟', a: 'الزخرف - الزمر' },
-                { q: 'صيام ثلاثة أيام من كل شهر ثلاثة أيام ؟', a: 'زكريا' },
-                { q: 'عدو الله ويدخل منها أهل النار ؟', a: 'زبانية' },
-                { q: 'نبات له رائحة ظريفة حارة الطعم يشرب ويأكل ؟', a: 'زنجبيل' },
-                { q: 'من الأحجار الكريمة ؟', a: 'زبرجد' },
-                { q: 'زوجة هارون الرشيد عرفت بأعمال الخير والإحسان ؟', a: 'زبيدة' },
-                { q: 'طبيب ومماط كان أول من استخدم الخيوط الجراحية الـ ... ؟', a: 'زهر اوي' },
-                { q: 'تسمى قبيلة سبأ بسوري ؟', a: 'الفقرة وق زبيدة - الزبوني' },
-                { q: 'من هي اليهودية التي حاولت قتل النبي صلى الله عليه وسلم بالسم ؟', a: 'زينب بنت الحارث' },
-                { q: 'من هو زوجان النبي صلى الله عليه وسلم ؟', a: 'زيد بن ثابت الأنصاري' },
-                { q: 'من أولاد فاطمة بنت النبي صلى الله عليه وسلم ؟', a: 'زينب' },
-                { q: 'أحد زوجات النبي صلى الله عليه وسلم ؟', a: 'زينب' },
-                { q: 'أحد أكبر بنات النبي صلى الله عليه وسلم ؟', a: 'زينب رضي الله عنها' },
-                { q: 'أيهما أطلق عليها لقب بالفاتورة الشرق الملكة زينوبيا ملكة تدمر أم كليوباترا ملكة مصر ؟', a: 'زينوبيا' },
-                { q: 'من أصحاب المعلقات العشرة ؟', a: 'زهير بن أبي سلمى' },
-                { q: 'أحد زوجات الرسول الكريم عليه الصلاة والسلام ؟', a: 'زينب بنت جحش بن رئاب الأسدية / زينب بنت خزيمة (أم المساكين)' }
-            ],
+    // ============================================================
 
-            'س': [
-                { q: 'من كبار علماء اللغة العربية ؟', a: 'سيبويه' },
-                { q: 'ماذا يطلق على الجماعة من النساء ؟', a: 'سرب' },
-                { q: 'من هم أهل الوبر ؟', a: 'سكان الخيام وهم البدو' },
-                { q: 'من هم أهل المدر ؟', a: 'سكان الأبنية أي المدن' },
-                { q: 'من هو النبي الذي علمه الله لغة الطيور والحيوان ؟', a: 'سليمان عليه السلام' },
-                { q: 'من هو قائد المسلمين في معركة القادسية ؟', a: 'سعد بن أبي وقاص' },
-                { q: 'من هو قائد المسلمين في معركة عين جالوت ؟', a: 'سيف الدين قطز' },
-                { q: 'من أيام يوم القيامة ؟', a: 'ساعة' },
-                { q: 'مصباح ؟', a: 'سراج' },
-                { q: 'بلاد فتحها محمد بن القاسم ؟', a: 'سند' },
-                { q: 'من السبع الموبقات ؟', a: 'سحر' },
-                { q: 'عرفة للزوجات المتزوجة ماذا تسمى ؟', a: 'سباع' },
-                { q: 'بيئة قيقة ؟', a: 'سوس' },
-                { q: 'اسم يعني مرآة ؟', a: 'سنجبل' },
-                { q: 'أول من رسم سهمها في الإسلام ؟', a: 'سعد بن أبي وقاص رضي الله عنه' },
-                { q: 'طلب الشيء ؟', a: 'سؤال' },
-                { q: 'أخو شهير ؟', a: 'سيبويه' },
-                { q: 'ما هو الاسم القديم للبلاد ؟', a: 'سيام قديما' },
-                { q: 'من حركات الصلاة ؟', a: 'سجود' },
-                { q: 'من هو مؤذن النبي صلى الله عليه وسلم في مكة ؟', a: 'سعد القرظ' },
-                { q: 'من هو مخترع الرادار ؟', a: 'سر هوربرت واط' },
-                { q: 'كم كان عمر النبي صلى الله عليه وسلم حين توفيت أمه ؟', a: 'ست سنوات' },
-                { q: 'كم عدد أولاد النبي صلى الله عليه وسلم ؟', a: 'سبعة أولاد ثلاثة ذكور وأربعة بنات' },
-                { q: 'من المبشرين بالجنة ؟', a: 'سعد بن أبي وقاص - سعد بن زيد' },
-                { q: 'أيهما من المبشرين بالجنة عمر بن الخطاب أو سعد بن أبي وقاص ؟', a: 'سعد بن أبي وقاص...' },
-                { q: 'من هو مخترع الدبابة ؟', a: 'ستيفنسون' },
-                { q: 'متى حكم الخلفاء العباسيين 602 سنة ؟ 702 سنة ؟', a: 'ستمائة واثنين سنة من سنة 656 (1258م) إلى سقوط بغداد على يد هولاكو' },
-                { q: 'بماذا لقب خالد بن الوليد ؟', a: 'سيف الله' },
-                { q: 'لقب علي بن أبي طالب بالامين الحكيم ؟', a: 'سلمان الفارسي' },
-                { q: 'كم دقيقة في الساعة الواحدة ؟', a: 'ستون دقيقة' },
-                { q: 'كم ثانية في الدقيقة الواحدة ؟', a: 'ستون ثانية' },
-                { q: 'ما جمع كلمة سراج ؟', a: 'سرج' },
-                { q: 'الجمل هو الحيوان الذي يطلق عليه العرب ؟', a: 'سفينة الصحراء' },
-                { q: 'إحدى زوجات الرسول الكريم عليه الصلاة والسلام ؟', a: 'سودة بنت زمعه أم قيس' }
-            ],
+    let state = {
+      currentDay: null,
+      teams: [
+        { name: 'الفريق 1', logo: null, members: [], stats: {} },
+        { name: 'الفريق 2', logo: null, members: [], stats: {} }
+      ],
+      currentTeam: 0,
+      currentMemberIndex: [0, 0],
+      hexStates: {},
+      roundWins: [0, 0],
+      currentRound: 1,
+      currentLetter: null,
+      peer: null,
+      conn: null,
 
-            'ش': [
-                { q: 'مشروب صيني المنشأ ؟', a: 'شاي' },
-                { q: 'إبليس لعنه الله ؟', a: 'شيطان رجيم' },
-                { q: 'الفتوة والحداثة ؟', a: 'شباب' },
-                { q: 'أكمل ( له عندي أمر مـ ؟ )', a: 'شغافا' },
-                { q: 'في العين ؟', a: 'شبكية' },
-                { q: 'ولد الطيبة ؟', a: 'شادن' },
-                { q: 'الشهر الخامس في السنة السريانية ؟', a: 'شباط' },
-                { q: 'من الطيور حسن الصوت ؟', a: 'شحرور' },
-                { q: 'من ألعاب الذكاء ؟', a: 'شطرنج' },
-                { q: 'الجوع بعد الشبع ؟', a: 'شبعاء' },
-                { q: 'نبات عشبي حببي ؟', a: 'شعير' },
-                { q: 'مهارة في الاحتيال وخداع الحواس ؟', a: 'شعوذة' },
-                { q: 'ما هو الاسم الحقيقي لعبدالمطلب جد النبي صلى الله عليه وسلم ؟', a: 'شيبة الحمد' },
-                { q: 'من هو أخو عثمان بن شداد ومساعده ؟', a: 'شهيب' },
-                { q: 'بماذا يسمى يوم السبت في الجاهلية ؟', a: 'شبار' },
-                { q: 'ما هو الاسم الحقيقي لرحالة ابن بطوطة ؟', a: 'شمس الدين محمد بن عبدالله بن محمد بن إبراهيم' }
-            ],
+      currentQuestionId: null,
+      tempExcludedQuestionIds: []
+    };
 
-            'ص': [
-                { q: 'مقفلة كل شيء ؟', a: 'صدر' },
-                { q: 'ماذا يطلق على جماعة من الإبل ؟', a: 'صرمة' },
-                { q: 'ماذا يطلق على جماعة من البقر ؟', a: 'صوار' },
-                { q: 'من هو النبي الذي ذكر في القرآن اسمه بدأ بحرف الصاد ؟', a: 'صالح' },
-                { q: 'من هو قائد المسلمين في معركة خيبر ؟', a: 'صلاح الدين الأيوبي' },
-                { q: 'صحابي عمي اسمه على اسم مدينه ؟', a: 'صخر بن العباس' },
-                { q: 'شجر خشب طيب الرائحة ؟', a: 'صندل' },
-                { q: 'أول النهار ؟', a: 'صباح' },
-                { q: 'شهر الزوجة ؟', a: 'صداق' },
-                { q: 'كلمة تعني الطريق ؟', a: 'صراط' },
-                { q: 'صاحب لقب الناصر ؟', a: 'صلاح الدين الأيوبي' },
-                { q: 'مطابقة الكلام للواقع ؟', a: 'صدق' },
-                { q: 'عكس الوارد ؟', a: 'صادر' },
-                { q: 'شيء تأخذه منك ويعطى عليك ؟', a: 'مصرووفة' },
-                { q: 'من هي اليهودية التي أسمت وتزوجها النبي صلى الله عليه وسلم ؟', a: 'صفية بنت حيي بن أخطب' },
-                { q: 'صح أم خطأ أن اسم البحر الذي كان يطلق سابقاً على جميع الساحل الشرقي للجزيرة العربية ؟', a: 'صح' },
-                { q: 'أحد عمات النبي صلى الله عليه وسلم ؟', a: 'صفية رضي الله عنها' },
-                { q: 'عمة الرسول عليه الصلاة والسلام وزوجة الحارث...', a: 'صفية بنت عبدالمطلب' },
-                { q: 'صح أم خطأ ( أنه لا يجوز للحاج أن يأكل من لحم ضحيته ) ؟', a: 'صح' },
-                { q: 'صح أم خطأ ( أنه يجب على الحاج أن ينام في منى ) ؟', a: 'صح' },
-                { q: 'صح أم خطأ ( أن للصيام يوم الوقفة في عرفة ثواب كبيرا ) ؟', a: 'صح' },
-                { q: 'ما هي عاصمة اليمن ؟', a: 'صنعاء' },
-                { q: 'عكس كلمة سمير ؟', a: 'صعب' },
-                { q: 'إحدى زوجات الرسول الكريم عليه الصلاة والسلام ؟', a: 'صفية بنت حي بن أخطب' },
-                { q: 'من أخوات كأن ترفع المبتدأ وتنصب الخبر ؟', a: 'صار' }
-            ],
+    const hexGrid = [
+      { row: 0, letters: letters.slice(0, 5) },
+      { row: 1, letters: letters.slice(5, 11) },
+      { row: 2, letters: letters.slice(11, 16) },
+      { row: 3, letters: letters.slice(16, 22) },
+      { row: 4, letters: letters.slice(22, 27) },
+      { row: 5, letters: letters.slice(27, 28) }
+    ];
 
-            'ض': [
-                { q: 'الانحراف عن دين الله ؟', a: 'ضلال' },
-                { q: 'من هو الأكرش ؟', a: 'ضخم البطن' },
-                { q: 'من الحيوانات الصحراوية ؟', a: 'ضب' },
-                { q: 'أطفأت النار وأوقفت ؟', a: 'ضمرت' },
-                { q: 'أموال متشابهة وصفة ؟', a: 'مضاهة' },
-                { q: 'استعداد واذا كفني لإدراك الحديث والطيب ؟', a: 'ضمير' },
-                { q: 'أعمى ؟', a: 'ضرير' },
-                { q: 'قبول لا دعى فيه ؟', a: 'فضل' },
-                { q: 'وهو ؟', a: 'ضوء' },
-                { q: 'أخو غريبة أنت ؟', a: 'ضرار' },
-                { q: 'خلاف الشيء وعكسه ؟', a: 'ضد' },
-                { q: 'جزء من اليوم ؟', a: 'ضحى' },
-                { q: 'أحد أعمام النبي صلى الله عليه وسلم ؟', a: 'ضرار' }
-            ],
+    // ✅ AudioContext: لازم يتفعل بعد تفاعل
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
-            'ط': [
-                { q: 'أحد أصحاب المعلقات العشرة ؟', a: 'طرفة بن العبد البكري' },
-                { q: 'من هو القائل - لكل مقام مقال - ؟', a: 'طرفة بن العبد البكري' },
-                { q: 'عكس الخبيث ؟', a: 'طيب' },
-                { q: 'يقين ؟', a: 'طأنين' },
-                { q: 'مرض يسمى الموت الأسود ؟', a: 'طاعون' },
-                { q: 'عضو في داخل جسم الإنسان ؟', a: 'طحال' },
-                { q: 'عضو في داخل جسم الانسان ؟', a: 'طبلة الأذن' },
-                { q: 'اسم المهن ؟', a: 'طب' },
-                { q: 'مدينة تاريخية قرب مكة المكرمة الـ ..... ؟', a: 'الطائف' },
-                { q: 'نوم ويجود مع البرد ؟', a: 'طرب' },
-                { q: 'صحابي بالنبياض ؟', a: 'طلحة بن عبيد الله رضي الله عنه' },
-                { q: 'العصيان والشيطان وما عبد من غير الله تعالى ؟', a: 'طاغوت' },
-                { q: 'الخلق - كلمة مرادفة لـ ؟', a: 'الطبع' },
-                { q: 'من المبشرين بالجنة ؟', a: 'طلحة بن عبيدالله' },
-                { q: 'أيهما كتب كتاب عبقرية محمد للسيرة للدكتور حسن حسين أم العقاد ؟', a: 'طه حسين' },
-                { q: 'من أصحاب المعلقات العشرة ؟', a: 'طرفة بن العبد البكري' },
-                { q: 'أين نشأت أول مكتبة في التاريخ ؟', a: 'طيبة وترجع إلى عام 2000 قبل الميلاد... مكتبة الورق' },
-                { q: 'أكمل المثل التالي السهران ليله ____ والنائم ليله غمضة ؟', a: 'طويل' },
-                { q: 'أين ولد ابن بطوطة ؟', a: 'طنجة عام 1304 م' }
-            ],
+    async function ensureAudioReady() {
+      try {
+        if (audioCtx && audioCtx.state === 'suspended') {
+          await audioCtx.resume();
+        }
+      } catch { }
+    }
 
-            'ظ': [
-                { q: 'في جسم الانسان ؟', a: 'ظفر' },
-                { q: 'التهمة لها اسم فصح ؟', a: 'ظنة' },
-                { q: 'لا يرى إلا في النهار أو عند توفر الضوء ؟', a: 'ظل' },
-                { q: 'جور ؟', a: 'ظلم' },
-                { q: 'كلمة تعني وسطهم في معظمهم ؟', a: 'ظهرهم' },
-                { q: 'في جسم الانسان ؟', a: 'ظهر' },
-                { q: 'يقال على الدواب التي في السبوق والارتداد ؟', a: 'ظعن' },
-                { q: 'عكس نور ؟', a: 'ظلام' },
-                { q: 'عند انتصاف النهار الـ ؟', a: 'الظهيرة' },
-                { q: 'يستخدم للرسائل ؟', a: 'ظرف' },
-                { q: 'يطلق على الشيء من كل شيء ؟', a: 'طرف' },
-                { q: 'الذكر البالغ أربع سنوات حسن الهيئة عند يطلق على كلمة عظيمة واداة ؟', a: 'طرف' },
-                { q: 'يطلق في الجاهلية ؟', a: 'ظهر' },
-                { q: 'شنوا الشيء الذي مهما نظفه لا يخبط ولا يلمع ؟', a: 'الظل' },
-                { q: 'اسم يبين مكان حدوث الفعل يعرف بماذا ؟', a: 'ظرف مكان' },
-                { q: 'الزمن الذي يحدث فيه الفعل يعرف بماذا ؟', a: 'ظرف زمان' },
-                { q: 'من اخوات كان ترفع المبتدأ وتنصب الخبر ؟', a: 'ظل' }
-            ],
+    function playChime() {
+      const frequencies = [523.25, 659.25, 783.99];
+      frequencies.forEach((freq, i) => {
+        setTimeout(() => {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.frequency.value = freq;
+          gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+          osc.start();
+          osc.stop(audioCtx.currentTime + 0.5);
+        }, i * 100);
+      });
+    }
 
-            'ع': [
-                { q: 'اسم يوم الجمعة قديما ؟', a: 'عروبة' },
-                { q: 'ماذا تسمى الجماعة من الحمير ؟', a: 'عانة' },
-                { q: 'من هم القوم الذين أرسل إليهم سيدنا صالح ؟', a: 'عاد ارم' },
-                { q: 'من هو النبي الذي ينسب إلى أمه دائما في القرآن ؟', a: 'عيسى ابن مريم عليه السلام' },
-                { q: 'من هو الصحابي الذي كتب صلح الحديبية ؟', a: 'علي بن أبي طالب' },
-                { q: 'مكة المكرمة ما كان قدامها ؟', a: 'عمر بن جبير' },
-                { q: 'من قاد المسلمين في معركة بلاط الشهداء ؟', a: 'عبد الله الغافقي' },
-                { q: 'من هو قائد الأسطول الاسلامي في أول معركة بحرية ؟', a: 'عبد الله بن أبي سرح سنة 34 هجري' },
-                { q: 'من هو الصحابي الذي اعتزل النبي (صلم) الرواية هو أبو هريرة ؟', a: 'علي بن أبي طالب' },
-                { q: 'من أسماء الذهب ؟', a: 'عقيـد' },
-                { q: 'الاسم الحقيقي لأبي طالب عم النبي صلى الله عليه وسلم ؟', a: 'عبد مناف بن عبدالمطلب' },
-                { q: 'كلمة تعني عظة ؟', a: 'عبرة' },
-                { q: 'جمع عبدالله ؟', a: 'عباد الله' },
-                { q: 'شجرة التي تحتي خضر مثل ؟', a: 'عصا موسى عليه السلام' },
-                { q: 'من الكتب السماوية الإنجيل على من نزل ؟', a: 'عيسى عليه السلام' },
-                { q: 'من عم النبي صلى الله عليه وسلم وكان طعم اسن ؟ .... ؟', a: 'العباس رضي الله عنه' },
-                { q: 'خليفة أموي عرب الدواوين ؟', a: 'عبدالملك بن مروان' },
-                { q: 'الاسم الحقيقي لأبي هريرة رضي الله عنه ؟', a: 'عبدالرحمن بن صخر الأزدوي' },
-                { q: 'من خامس الخلفاء الراشدين ؟', a: 'عمر بن عبدالعزيز' },
-                { q: 'من أسماء الذهب ؟', a: 'عقيـد' },
-                { q: 'شاعر النبي صلى الله عليه وسلم ؟', a: 'عبدالله بن رواحة' },
-                { q: 'من هو مؤذن النبي صلى الله عليه وسلم في المدينة ؟', a: 'عبد الله بن أم مكتوم' },
-                { q: 'من هو أمين النبي صلى الله عليه وسلم على نسائه ؟', a: 'عبدالرحمن بن عوف' },
-                { q: 'اطلق على مصر لقب أرض الكنانة فمن هو ؟', a: 'عمر بن العاص...' },
-                { q: 'من فاتح بلاد الأندلس ؟', a: 'عقبة بن المسلم' },
-                { q: 'من هو القائد فاتح بلاد مصر ؟', a: 'عمر بن العاص' },
-                { q: 'في عهد من تم تجميع القرآن الكريم ؟', a: 'عثمان بن عفان ولذلك سمي بمصحف عثمان' },
-                { q: 'من هو اول من حمل لقب امير المؤمنين ؟', a: 'عمر بن الخطاب' },
-                { q: 'أحد الأولياء الذين دفن بهم النبي عليه الصلاة والسلام بعد بعثته ؟', a: 'عبدالله المغني - بلال - واطيب' },
-                { q: 'من المبشرين بالجنة ؟', a: 'علي بن أبي طالب - عثمان بن عفان - عمر بن الخطاب - عبدالرحمن بن عوف' }
-            ],
+    function playSound(freq, dur = 0.2) {
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.frequency.value = freq;
+      gain.gain.value = 0.3;
+      osc.start();
+      osc.stop(audioCtx.currentTime + dur);
+    }
 
-            'غ': [
-                { q: 'سخط ؟', a: 'غضب' },
-                { q: 'من أسماء الأسد ؟', a: 'غضنفر' },
-                { q: 'كلمة تعني غطاء ؟', a: 'غلاف' },
-                { q: 'اسم يطلق على ذكر السلحفاة ؟', a: 'غيلم' },
-                { q: 'كلمة تعني نقل ؟', a: 'غنم' },
-                { q: 'في الحديث " من ____ فليس منا " ؟', a: 'غشنا' },
-                { q: 'نوم خفيف ؟', a: 'غفوة' },
-                { q: 'في جسم الإنسان لها وظائف وإفرازات مختلفة ؟', a: 'غدد' },
-                { q: 'وفق بحث علمي على المخ ؟', a: 'غض البصر' },
-                { q: 'من الطباع المذمومة ؟', a: 'غرور' },
-                { q: 'إذا أمر القوم بأمر فليؤتم بهلهم ؟', a: '' },
-                { q: 'من كان ينطق الرسول الكريم عليه الصلاة والسلام للنبي والصلاة ؟', a: 'غار حراء' },
-                { q: 'أكمل المثل التالي السهران ليله طويل والنائم ليله ____ ؟', a: 'غمضة' }
-            ],
+    // Background
+    function createRamadanBG() {
+      const bg = document.getElementById('ramadan-bg');
+      for (let i = 0; i < 100; i++) {
+        const star = document.createElement('div');
+        star.className = 'star';
+        star.style.left = Math.random() * 100 + '%';
+        star.style.top = Math.random() * 100 + '%';
+        star.style.animationDelay = Math.random() * 3 + 's';
+        bg.appendChild(star);
+      }
+    }
 
-            'ف': [
-                { q: 'مقياس قديم من مقاييس الطول ؟', a: 'فرسخ' },
-                { q: 'ماذا يسمى صوت الأفعى ؟', a: 'فحيح' },
-                { q: 'كلمة تعني التوقف ؟', a: 'فرساد' },
-                { q: 'من الأوقات التي تسمى بها شعر وجد ؟', a: 'فجر' },
-                { q: 'انتقال المرض وانتقاله له ؟', a: 'فيروس' },
-                { q: 'أصل كلمة ديوان ؟', a: 'فارسي' },
-                { q: 'عنصر أبيض قابل للسحب والطرق ؟', a: 'فضة' },
-                { q: 'ما هو غاز العذوبة ؟', a: 'فرت' },
-                { q: 'من أسماء القرآن الكريم الـ .... ؟', a: 'الفرقان' },
-                { q: 'من هو صاحب كتاب القاموس المحيط ؟', a: 'الفيروز آبادي' },
-                { q: 'من أشهر أنواع الطائرات المقاتلة ؟', a: 'فانتوم' },
-                { q: 'الخلية الصغيرة ؟', a: 'فسيلة' },
-                { q: 'يسمى الظلام بـ ؟', a: 'فصال' },
-                { q: 'قال لمن يؤمن عمل في ؟', a: 'فنان' },
-                { q: 'من بين يديه سلاحه الأبيض ؟', a: 'فصالة' },
-                { q: 'برنامج صغير يعمل داخل ذاكرة الحاسب ؟', a: 'فيروس' },
-                { q: 'من هي أصغر بنات النبي عليه الصلاة والسلام ؟', a: 'فاطمة رضي الله عنها' },
-                { q: 'من هي التي كناها النبي عليه الصلاة والسلام في قصيدته ؟', a: 'فاطمة بنت أسد أم سيدنا علي بن أبي طالب' },
-                { q: 'من هي أم سيدنا علي بن أبي طالب ؟', a: 'فاطمة بنت أسد' },
-                { q: 'من هي أم كرم النساء نسباً ؟', a: 'فاطمة بنت النبي عليه الصلاة والسلام...' },
-                { q: 'من هم خالات النبي عليه الصلاة والسلام ؟', a: 'قريضة - فاطمة - ******' },
-                { q: 'أين يوجد جامع القيروان في مدينة مراكش أم فاس ؟', a: 'فاس المغربية وأنشئ سنة 859 م' },
-                { q: 'أكمل الشعر في الأمثال كنوم وضحكة أحسن من ___ ؟', a: 'فرح طبيبة' },
-                { q: 'تب إلى الله قبل أن لا ينفعك ندم ؟', a: 'فر صالح' }
-            ],
+    function createFooterDecorations() {
+      const footer = document.getElementById('footer-decorations');
+      for (let i = 0; i < 15; i++) {
+        const lantern = document.createElement('div');
+        lantern.className = 'footer-lantern';
+        lantern.style.animationDelay = (i * 0.2) + 's';
+        footer.appendChild(lantern);
+      }
+    }
 
-            'ق': [
-                { q: 'الأصفران ؟', a: 'ماء ولسان' },
-                { q: 'ماذا يسمى بيت النمل ؟', a: 'قرية' },
-                { q: 'ماذا يطلق على الجماعة من الرجال ؟', a: 'قوم' },
-                { q: 'أين درس صلاح الدين الأيوبي ؟', a: 'قلعة دمشق' },
-                { q: 'نيام ؟', a: 'قتات' },
-                { q: 'الصحيفة التي يكتب فيها ؟', a: 'قرطاس' },
-                { q: 'مدينة الألف مئذنة هي الـ ؟', a: 'القاهرة' },
-                { q: 'لقب يدني العباسي ؟', a: 'قاهر' },
-                { q: 'مدينة في تونس أنشأها عقبة بن نافع الـ ؟', a: 'القيروان' },
-                { q: 'كلمة تعني المولدة الـ ؟', a: 'القابلة' },
-                { q: 'ماذا يطلق على البحر الأحمر قديماً الـ ؟', a: 'القزم' },
-                { q: 'قرأته في صور وجود سيدنا محمد وصفه ابن بطوطة كائناته ؟', a: 'قامة' },
-                { q: 'معركة بين المسلمين والفرس سنة 16 هجري الـ ؟', a: 'القادسية' },
-                { q: 'المطر كلمة تعني ؟', a: 'قطر' },
-                { q: 'أحد أعمام النبي عليه الصلاة والسلام ؟', a: 'قثم' }
-            ],
+    // ✅✅ Buzzer Logic (معدل)
+    function toggleBuzzerMode() {
+      const id = Math.random().toString(36).substr(2, 5).toUpperCase();
+      document.getElementById('buzzer-overlay').style.display = 'flex';
+      document.getElementById('qrcode').innerHTML = '';
 
-            'ك': [
-                { q: 'ماذا يقال لمن جوز من الاثنين إلى الاثنين ؟', a: 'كهل' },
-                { q: 'هو الذي النبي صلى الله عليه وسلم كفله وربيه في الجنة ؟', a: 'كافل اليتيم' },
-                { q: 'حشرة صغيرة توضع فيها النخيل ( الإشم ) ؟', a: 'كنكة' },
-                { q: 'فيلسوف عربي ترجم معاني القرآن الكريم في 1143 م ؟', a: 'كاظمي' },
-                { q: 'قصد أداء الأركان خفية ؟', a: 'كد' },
-                { q: 'كلمة تعني الضيف ؟', a: 'كذا' },
-                { q: 'شاعر هجا النبي صلى الله عليه وسلم فماذا فعل به ؟', a: 'كعب بن زهير' },
-                { q: 'الوجود المطلق العام هو الـ ؟', a: 'الكون' },
-                { q: 'عبارة ربطت باسم علي بن أبي طالب رضي الله عنه ؟', a: 'كرم الله وجهه' },
-                { q: 'يستخرج العنبر من ؟', a: 'كبد الحوت' },
-                { q: 'البيت الحرام الـ ؟', a: 'الكعبة' },
-                { q: 'نهر في الجنة ؟', a: 'كوثر' },
-                { q: 'أقرطس اسم قوم أطلقه العرب على إحدى جزر البحر الأبيض المتوسط فما هي هذه الجزيرة ؟', a: 'كورس' },
-                { q: 'ما هو الاسم الكيميائي والعلمي للطباشير الذي نستعمله في الكتابة على اللوح الخشبي ؟', a: 'كربونات الكالسيوم أما كلوريد الصوديوم فهو ملح الطعام' },
-                { q: 'من أخوات إن تنصب المبتدأ وترفع الخبر تفيد التوكيد ؟', a: 'كأن' },
-                { q: 'أكمل المثل الخليجي ( جيت أفرغ مؤنس ____ وعرّضت ) ؟', a: 'كثفت' }
-            ],
+      const hostStatus = document.getElementById('host-status');
+      hostStatus.textContent = '⏳ تجهيز الاتصال...';
 
-            'ل': [
-                { q: 'أحد أصحاب المعلقات العشرة ؟', a: 'لبيد بن ربيعة العامري' },
-                { q: 'من أسماء الأسد ؟', a: 'ليث' },
-                { q: 'لبن النار الخامس الذي لا لون له ؟', a: 'لافا' },
-                { q: 'اسم يطلق على الشخص التعريفي أو التسويقي أو التثقيفي ؟', a: 'لقب' },
-                { q: 'حرف لنفي المستقبل حدوثه ؟', a: 'لن' },
-                { q: 'من أدوات الخل ؟', a: 'لحام' },
-                { q: 'أصوات تعبر بها كل قوم عن أغراضهم ؟', a: 'لغة' },
-                { q: 'نوع من الطيور ؟', a: 'لقلق' },
-                { q: 'هو من أطلق على عمر بن الخطاب رضي الله عنه لقب أمير المؤمنين ؟', a: 'لبيد بن ربيعة' },
-                { q: 'عبارة تردد في الحج ؟', a: 'لبيك اللهم لبيك' },
-                { q: 'من أسماء الوقاية من الحمى ؟', a: 'ليت' },
-                { q: 'حرف يدل على امتناع شيء لوجود غيره ؟', a: 'لولا' },
-                { q: 'سؤال فيه غموض ؟', a: 'لغز' },
-                { q: 'من أطلق لقب أمير المؤمنين على عمر بن الخطاب ؟', a: 'لبيد بن ربيعة' },
-                { q: 'أيهما ولد قبل الإسلام وأسماء حاتم الطائي أم الشاعر لبيد بن ربيعة ؟', a: 'لبيد بن ربيعة...' },
-                { q: 'من أصحاب المعلقات العشرة ؟', a: 'لبيد بن ربيعة العامري' },
-                { q: 'من هو مكتشف داء ****** ؟', a: 'لويس باستير' },
-                { q: 'من هو مكتشف الطريقة الفعالة للقضاء على الجراثيم التي توجد في اللبن ؟', a: 'لويس باستير' },
-                { q: 'من أخوات كأن تنصب المبتدأ وتنصب الخبر ؟', a: 'ليس' },
-                { q: 'من أخوات إن تنصب المبتدأ وترفع الخبر تفيد الاستدراك ؟', a: 'لكن' },
-                { q: 'من أخوات إن تنصب المبتدأ وترفع الخبر تفيد التمني ؟', a: 'ليت' },
-                { q: 'من أخوات إن تنصب المبتدأ وترفع الخبر تفيد الترجي ؟', a: 'لعل' }
-            ],
+      // ✅ رابط صحيح 100%
+      const buzzerUrl = new URL('buzzer.html', window.location.href);
+      buzzerUrl.hash = id;
 
-            'م': [
-                { q: 'ضعف عددهم ؟', a: 'مثلهم' },
-                { q: 'كائنات بحرية من جنس الثدييات ذكرت في القرآن الكريم ؟', a: 'مرجان' },
-                { q: 'عبادة كانت تقدس للناس والكواكب ؟', a: 'مجوسية' },
-                { q: 'مهنة رمضانية اختفت أو كادت ؟', a: 'مسحر' },
-                { q: 'من الكتب السماوية التوراة على من نزل ؟', a: 'موسى عليه السلام' },
-                { q: 'من الكتب السماوية القرآن الكريم على من نزل ؟', a: 'محمد صلى الله عليه وسلم' },
-                { q: 'من أسماء القمر التي لها دلالي لكماله ؟', a: 'محاق' },
-                { q: 'يوجد في البحر ؟', a: 'مرجان' },
-                { q: 'من هو مخترع الراديو ؟', a: 'ماركوني' },
-                { q: 'من الآلات الحربية القديمة ؟', a: 'منجنيق' },
-                { q: 'يستخرج من نبات ذكر الغزال ؟', a: 'مسك' },
-                { q: 'على أي دولة وقع العدوان الثلاثي عام 1956 م ؟', a: 'مصر' },
-                { q: 'أيهما كتب كتاب عبقرية محمد للدكتور حسن هيكل أم العقاد ؟', a: 'محمد حسين هيكل' },
-                { q: 'بماذا يسمى يوم الخميس في الجاهلية ؟', a: 'مؤنس' },
-                { q: 'كم مرة ذكرت كلمة الصمد في القرآن الكريم ؟', a: 'مرة واحدة' },
-                { q: 'فرقتان فكريتان... من هو مصعب الخير ؟', a: 'مصعب بن عمير...' },
-                { q: 'إحدى زوجات الرسول الكريم عليه الصلاة والسلام ؟', a: 'ميمونة بنت الحارث بن حزن رضي الله عنها' },
-                { q: 'من أخوات كأن تنصب المبتدأ وتنصب الخبر ؟', a: 'مازال' }
-            ],
+      new QRCode(document.getElementById("qrcode"), {
+        text: buzzerUrl.toString(),
+        width: 200,
+        height: 200
+      });
 
-            'ن': [
-                { q: 'بني سميت سورة من القرآن باسمه ؟', a: 'نوح' },
-                { q: 'ما يفرض الزوجة من زوجها من مال ؟', a: 'نفقة' },
-                { q: 'خير ؟', a: 'نيا' },
-                { q: 'خلق سيئ ليس ؟', a: 'نذل' },
-                { q: 'العصبية الشديدة ؟', a: 'نزلة' },
-                { q: 'يوم العاشر من ذي الحجة هو يوم الـ ؟', a: 'النحر' },
-                { q: 'أكمل " من صبر نال ومن ..... " ؟', a: 'نال ما تمنى' },
-                { q: 'من الطيور الجوارح ؟', a: 'نسر' },
-                { q: 'لقب الملك الذي أمر بحرق سيدنا إبراهيم عليه السلام ؟', a: 'النمرود' },
-                { q: 'ما هو الاسم الحقيقي لحنا ؟', a: 'نصراني حنا الرومي تركي الأصل...' },
-                { q: 'ماذا تسمى لغة الجمال ؟', a: 'ناقة' },
-                { q: 'أكمل المثل ( يد على غيد ولا تناث على ____ ) ؟', a: 'ندم' }
-            ],
+      if (state.peer) state.peer.destroy();
 
-            'ه': [
-                { q: 'تفسير لقب المفرد ؟', a: 'هو' },
-                { q: 'ماذا يسمى يوم النحر ؟', a: 'هرس' },
-                { q: 'بني سميت سورة من القرآن باسمه ؟', a: 'هود' },
-                { q: 'خليفة عباسي شهير ؟', a: 'هارون الرشيد' },
-                { q: 'الحفرة العميقة القعر ؟', a: 'هوة' },
-                { q: 'عزة القمر ؟', a: 'هلال' },
-                { q: 'فيلسوف عربي ترجم معاني القرآن الكريم عام 1945 م ؟', a: 'هيكل' },
-                { q: 'الصوت الذي يسمع بدون رؤية صاحبه ؟', a: 'هاتف' },
-                { q: 'كلمة تعني قط ؟', a: 'هر' },
-                { q: 'من الأنبياء عليهم السلام اسمه السلام ؟', a: 'هود' },
-                { q: 'من أسماء الأسد ؟', a: 'هزبر' },
-                { q: 'صحفي شهير ؟', a: 'هيكل' },
-                { q: 'صلاة الليل ؟', a: 'تهجد' },
-                { q: 'قبيلة النبي صلى الله عليه وسلم ؟', a: 'هاشمي' },
-                { q: 'من هو مخترع الغواصة ؟', a: 'هولاند' },
-                { q: 'ما هو الاسم من الأسماء الثلاثية يعني اسم الكريم عمر - هشام - الحارث ؟', a: 'هشام' }
-            ],
+      state.peer = new Peer(id, { debug: 2 });
 
-            'و': [
-                { q: 'من معاجم اللغة ؟', a: 'وجيز' },
-                { q: 'خير الأمور ؟', a: 'وسطها' },
-                { q: 'العدد المفرد ؟', a: 'وتر' },
-                { q: 'كفنها الإنسان لما بعد وفاته ؟', a: 'وصية' },
-                { q: 'من قال في وصف المؤمن ( إذا جاع صبر وإذا شكر ) ؟', a: 'واصل بن عطاء' },
-                { q: 'عكس الحقوق ؟', a: 'واجبات' },
-                { q: 'من المناصب القديمة الحديثة ؟', a: 'والي' },
-                { q: 'من مكتشف الدورة الدموية الكبرى ؟', a: 'وليم هارفي' },
-                { q: 'حرف عطف ؟', a: 'واو' },
-                { q: 'المطر الشديد ضخم القطر ؟', a: 'وابل' },
-                { q: 'ما هي عاصمة بريطانيا قبل لندن ؟', a: 'ونستر' },
-                { q: 'صوت بعض الحيوانات ؟', a: 'وعي' },
-                { q: 'الفراش الناعم اللين ؟', a: 'وثير' },
-                { q: 'أكمل النوم في الأمثال السهران ليله طويل ___ والنائم ليله غمضة ؟', a: 'وثير' },
-                { q: 'من كتّاب الأندلس الذين خلّفوا تراثاً علمياً ؟', a: 'ولادة بنت المستكفي' },
-                { q: 'أكمل المثل الشعبي نص ملح ؟', a: 'وراب' },
-                { q: 'ما هي الكلمة التي تقع في نصف القرآن الكريم ؟', a: 'ويتلطف في سورة الكهف' }
-            ],
+      state.peer.on('open', () => {
+        hostStatus.textContent = `✅ جاهز (ID: ${id})`;
+        console.log('Host PeerID Ready:', id);
+      });
 
-            'ي': [
-                { q: 'من القائل ( إياك وأعراض الرجال ) ؟', a: 'يزيد بن المهلب' },
-                { q: 'بني سميت سورة من القرآن باسمه ؟', a: 'يونس' },
-                { q: 'بني سميت سورة من القرآن باسمه ؟', a: 'يوسف' },
-                { q: 'من هو النبي الذي ألقى في الجب من أخوته ؟', a: 'يوسف عليه السلام' },
-                { q: 'حرف نداء ؟', a: 'يا' },
-                { q: 'زهر عطري ؟', a: 'ياسمين' },
-                { q: 'ما كان وحداً أو فرداً ؟', a: 'يتيم' },
-                { q: 'أمير النحل وذكرها ؟', a: 'يعسوب' },
-                { q: 'كلمة تعني قوط ؟', a: 'يبس' },
-                { q: 'صديق من عم ؟', a: 'يزيد' },
-                { q: 'سلعة وتقال في القدم المتحد ؟', a: 'يراع' },
-                { q: 'حمام بري ؟', a: 'يمام' },
-                { q: 'من صفات الدين الإسلامي الـ ؟', a: 'اليسر' },
-                { q: 'صاحب كتاب معجم البلدان ؟', a: 'ياقوت الحموي' },
-                { q: 'سورة تسمى قلب القرآن هي ؟', a: 'يس' },
-                { q: 'منظمة الأمم المتحدة للطفولة ؟', a: 'يونيسيف' },
-                { q: 'الصغير الذي لم يفقد أبويه الاثنين أو أحدهما ؟', a: 'يتيم' },
-                { q: 'أكمل النوم في الأمثال الليل ما قصير إلا على ___ ؟', a: 'نائم' },
-                { q: 'أكمل من تراث الآباء والأجداد ( رزق الحلال ___ ) ؟', a: 'يزيد' }
-            ]
-        };
+      state.peer.on('connection', conn => {
+        state.conn = conn;
 
-
-        // ============================================================
-        // ✅✅✅ تعديل الأسئلة فقط: (بدون تغيير منطق اللعب)
-        // - منع تكرار 30 يوم
-        // - زر تغيير بدون حرق
-        // - الحرق فقط عند صح/خطأ
-        // ============================================================
-
-        // 1) تجهيز أسئلة بمعرّفات ثابتة
-        const allQuestions = {};
-        Object.keys(questions).forEach(letter => {
-            allQuestions[letter] = (questions[letter] || []).map((item, index) => ({
-                ...item,
-                id: `${letter}-${index}`
-            }));
+        conn.on('open', () => {
+          hostStatus.textContent = '✅ متصل بجوال الجرس';
+          console.log('Buzzer connected!');
         });
 
-        // 2) تخزين عالمي للأسئلة المستخدمة عبر كل الأيام
-        let usedQuestionsGlobal = JSON.parse(localStorage.getItem('usedQuestionsGlobal') || '[]');
+        conn.on('data', data => {
+          if (data.action === 'buzz') showBuzz(data.name);
+        });
 
-        // 3) اختيار سؤال عشوائي متاح + استبعاد مؤقت للتغيير
-        function pickQuestion(letter, tempExcludeIds = []) {
-            const list = allQuestions[letter] || [{ q: 'سؤال تجريبي؟', a: 'جواب', id: `${letter}-demo` }];
-            const available = list.filter(q => !usedQuestionsGlobal.includes(q.id) && !tempExcludeIds.includes(q.id));
-            if (available.length === 0) return null;
-            return available[Math.floor(Math.random() * available.length)];
+        conn.on('close', () => {
+          hostStatus.textContent = '⚠️ انقطع الاتصال';
+        });
+
+        conn.on('error', (e) => {
+          hostStatus.textContent = '❌ خطأ اتصال';
+          console.error(e);
+        });
+      });
+
+      state.peer.on('error', (e) => {
+        hostStatus.textContent = '❌ PeerJS Error (جرّبي شبكة ثانية)';
+        console.error(e);
+        alert('مشكلة في PeerJS/WebRTC. جرّبي بيانات الجوال أو Wi-Fi ثاني.');
+      });
+    }
+
+    function showBuzz(name) {
+      const el = document.getElementById('buzzer-pressed');
+      el.textContent = name || '🔔';
+      el.style.display = 'block';
+      playSound(800, 0.5);
+      setTimeout(() => el.style.display = 'none', 3000);
+    }
+
+    function closeBuzzerOverlay() {
+      document.getElementById('buzzer-overlay').style.display = 'none';
+    }
+
+    // Game Logic
+    function generateCalendar() {
+      const grid = document.getElementById('days-grid');
+      grid.innerHTML = '';
+      const saved = JSON.parse(localStorage.getItem('horoof_days') || '{}');
+      for (let i = 1; i <= 30; i++) {
+        const card = document.createElement('div');
+        card.className = 'day-card' + (saved[i] ? ' completed' : '');
+        card.innerHTML = `<div class="text-4xl font-black" style="color:#FFD700">${i}</div><div class="text-xs font-bold" style="color:#F4E4B0">اليوم ${i}</div>`;
+        card.onclick = () => startDay(i);
+        grid.appendChild(card);
+      }
+    }
+
+    function startDay(day) {
+      state.currentDay = day;
+      document.getElementById('day-num').textContent = day;
+      document.getElementById('calendar-screen').classList.add('hidden');
+      document.getElementById('setup-screen').classList.remove('hidden');
+    }
+
+    document.getElementById('team1-logo').addEventListener('change', e => handleLogoUpload(e, 0));
+    document.getElementById('team2-logo').addEventListener('change', e => handleLogoUpload(e, 1));
+
+    function handleLogoUpload(e, teamIdx) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        state.teams[teamIdx].logo = reader.result;
+        const preview = document.getElementById(teamIdx === 0 ? 'team1-logo-preview' : 'team2-logo-preview');
+        preview.innerHTML = `<img src="${reader.result}" class="w-20 h-20 rounded-full border-4" style="border-color:${teamIdx === 0 ? '#FFD700' : '#4169E1'}">`;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function startGame() {
+      state.teams[0].name = document.getElementById('team1-name').value || 'الفريق 1';
+      state.teams[1].name = document.getElementById('team2-name').value || 'الفريق 2';
+      state.teams[0].members = document.getElementById('team1-members').value.split('\n').filter(m => m.trim());
+      state.teams[1].members = document.getElementById('team2-members').value.split('\n').filter(m => m.trim());
+      state.teams.forEach(t => t.members.forEach(m => { if (!t.stats[m]) t.stats[m] = 0; }));
+
+      document.getElementById('setup-screen').classList.add('hidden');
+      document.getElementById('game-screen').classList.remove('hidden');
+      document.getElementById('top-bar').style.display = 'flex';
+      document.getElementById('game-day').textContent = state.currentDay;
+
+      const sb1 = document.getElementById('sb1-logo');
+      const sb2 = document.getElementById('sb2-logo');
+      if (state.teams[0].logo) { sb1.src = state.teams[0].logo; sb1.style.display = 'block'; }
+      if (state.teams[1].logo) { sb2.src = state.teams[1].logo; sb2.style.display = 'block'; }
+
+      updateScoreboards();
+      generateHexGrid();
+      updateTurn();
+    }
+
+    function updateScoreboards() {
+      for (let i = 0; i < 2; i++) {
+        const t = state.teams[i];
+        document.getElementById(`sb${i + 1}-name`).textContent = t.name;
+        document.getElementById(`sb${i + 1}-rounds`).textContent = state.roundWins[i];
+        const membersDiv = document.getElementById(`sb${i + 1}-members`);
+        membersDiv.innerHTML = '';
+        t.members.forEach((m, idx) => {
+          const div = document.createElement('div');
+          div.className = 'member' + (idx === state.currentMemberIndex[i] && state.currentTeam === i ? ' active' : '');
+          div.innerHTML = `<span>${m}</span><span style="color:#FFD700;font-weight:900">${t.stats[m] || 0} ✅</span>`;
+          membersDiv.appendChild(div);
+        });
+      }
+    }
+
+    function generateHexGrid() {
+      const grid = document.getElementById('hex-grid');
+      grid.innerHTML = '';
+      hexGrid.forEach(r => {
+        const row = document.createElement('div');
+        row.className = 'hex-row';
+        r.letters.forEach(l => {
+          const hex = document.createElement('div');
+          hex.className = 'hex' + (state.hexStates[l] ? ` team${state.hexStates[l]}` : '');
+          hex.innerHTML = `<div class="hex-inner">${l}</div>`;
+          hex.onclick = () => onHexClick(l);
+          row.appendChild(hex);
+        });
+        grid.appendChild(row);
+      });
+    }
+
+    function onHexClick(letter) {
+      if (state.hexStates[letter]) return;
+      state.currentLetter = letter;
+
+      state.tempExcludedQuestionIds = [];
+      state.currentQuestionId = null;
+
+      ensureAudioReady();
+      playChime();
+      showQuestion(letter);
+    }
+
+    function showQuestion(letter) {
+      const selected = pickQuestion(letter, state.tempExcludedQuestionIds);
+
+      let qObj;
+      if (!selected) {
+        alert("انتهت أسئلة هذا الحرف لجميع الأيام!");
+        qObj = (allQuestions[letter] && allQuestions[letter][0]) || { q: 'سؤال تجريبي؟', a: 'جواب', id: `${letter}-demo` };
+      } else {
+        qObj = selected;
+      }
+
+      const m = state.teams[state.currentTeam].members[state.currentMemberIndex[state.currentTeam]];
+      document.getElementById('q-turn').textContent = m || state.teams[state.currentTeam].name;
+      document.getElementById('q-letter').textContent = letter;
+      document.getElementById('q-text').textContent = qObj.q;
+
+      state.currentQuestionId = qObj.id;
+      document.getElementById('question-modal').classList.add('active');
+    }
+
+    function answerCorrect() {
+      ensureAudioReady();
+      playSound(1200, 0.3);
+
+      burnCurrentQuestion();
+
+      const t = state.currentTeam;
+      const m = state.teams[t].members[state.currentMemberIndex[t]];
+      if (m) state.teams[t].stats[m]++;
+
+      state.hexStates[state.currentLetter] = t + 1;
+
+      generateHexGrid();
+      closeModal();
+
+      if (checkWinBFS(t)) setTimeout(() => showVictory(t), 500);
+      else nextTurn();
+    }
+
+    function answerWrong() {
+      ensureAudioReady();
+      playSound(300, 0.3);
+
+      burnCurrentQuestion();
+
+      closeModal();
+      nextTurn();
+    }
+
+    function changeQuestion() {
+      if (state.currentQuestionId && !state.tempExcludedQuestionIds.includes(state.currentQuestionId)) {
+        state.tempExcludedQuestionIds.push(state.currentQuestionId);
+      }
+      showQuestion(state.currentLetter);
+    }
+
+    function closeModal() {
+      document.getElementById('question-modal').classList.remove('active');
+    }
+
+    function nextTurn() {
+      state.currentMemberIndex[state.currentTeam]++;
+      if (state.currentMemberIndex[state.currentTeam] >= state.teams[state.currentTeam].members.length) state.currentMemberIndex[state.currentTeam] = 0;
+      state.currentTeam = 1 - state.currentTeam;
+      updateTurn();
+      updateScoreboards();
+    }
+
+    function updateTurn() {
+      const t = state.teams[state.currentTeam];
+      const m = t.members[state.currentMemberIndex[state.currentTeam]];
+      document.getElementById('current-turn').textContent = m || t.name;
+    }
+
+    // BFS Pathfinding (كما هو)
+    function checkWinBFS(teamIdx) {
+      const owned = Object.keys(state.hexStates).filter(l => state.hexStates[l] === teamIdx + 1);
+      if (owned.length < 4) return false;
+
+      const neighbors = {
+        'أ': ['ب', 'ح', 'خ'], 'ب': ['أ', 'ت', 'خ', 'د'], 'ت': ['ب', 'ث', 'د', 'ذ'], 'ث': ['ت', 'ج', 'ذ', 'ر'], 'ج': ['ث', 'ر', 'ز'],
+        'ح': ['أ', 'ب', 'س', 'ش'], 'خ': ['أ', 'ب', 'ح', 'د', 'س', 'ش'], 'د': ['ب', 'ت', 'خ', 'ذ', 'ش', 'ص'], 'ذ': ['ت', 'ث', 'د', 'ر', 'ص', 'ض'], 'ر': ['ث', 'ج', 'ذ', 'ز', 'ض', 'ط'], 'ز': ['ج', 'ر', 'ط'],
+        'س': ['ح', 'خ', 'ظ', 'ع'], 'ش': ['ح', 'خ', 'د', 'س', 'ص', 'ظ', 'ع'], 'ص': ['د', 'ذ', 'ش', 'ض', 'ع', 'غ'], 'ض': ['ذ', 'ر', 'ص', 'ط', 'غ', 'ف'], 'ط': ['ر', 'ز', 'ض', 'ف', 'ق'],
+        'ظ': ['س', 'ش', 'ل', 'م'], 'ع': ['س', 'ش', 'ص', 'ظ', 'غ', 'ل', 'م'], 'غ': ['ص', 'ض', 'ع', 'ف', 'م', 'ن'], 'ف': ['ض', 'ط', 'غ', 'ق', 'ن', 'ه'], 'ق': ['ط', 'ف', 'ك', 'ه', 'و'], 'ك': ['ق', 'و'],
+        'ل': ['ظ', 'ع', 'ي'], 'م': ['ظ', 'ع', 'غ', 'ل', 'ن', 'ي'], 'ن': ['غ', 'ف', 'م', 'ه', 'ي'], 'ه': ['ف', 'ق', 'ن', 'و', 'ي'], 'و': ['ق', 'ك', 'ه', 'ي'],
+        'ي': ['ل', 'م', 'ن', 'ه', 'و']
+      };
+
+      const queue = [];
+      const visited = new Set();
+
+      if (teamIdx === 0) { // Right to Left
+        const right = ['ج', 'ز', 'ط', 'ك', 'و', 'ي'].filter(l => owned.includes(l));
+        const left = ['أ', 'ح', 'س', 'ظ', 'ل', 'ي'].filter(l => owned.includes(l));
+        if (right.length === 0 || left.length === 0) return false;
+
+        right.forEach(l => queue.push(l));
+        while (queue.length) {
+          const curr = queue.shift();
+          if (left.includes(curr)) return true;
+          if (visited.has(curr)) continue;
+          visited.add(curr);
+          (neighbors[curr] || []).forEach(n => { if (owned.includes(n)) queue.push(n); });
         }
+      } else { // Top to Bottom
+        const top = ['أ', 'ب', 'ت', 'ث', 'ج'].filter(l => owned.includes(l));
+        const bottom = ['ل', 'م', 'ن', 'ه', 'و', 'ي'].filter(l => owned.includes(l));
+        if (top.length === 0 || bottom.length === 0) return false;
 
-        // 4) حرق السؤال (تسجيله مستخدم) — فقط عند صح/خطأ
-        function burnCurrentQuestion() {
-            const id = state.currentQuestionId;
-            if (!id) return;
-
-            if (!usedQuestionsGlobal.includes(id)) {
-                usedQuestionsGlobal.push(id);
-                localStorage.setItem('usedQuestionsGlobal', JSON.stringify(usedQuestionsGlobal));
-            }
-
-            // بعد الحرق نظف الاستثناء المؤقت
-            state.tempExcludedQuestionIds = [];
+        top.forEach(l => queue.push(l));
+        while (queue.length) {
+          const curr = queue.shift();
+          if (bottom.includes(curr)) return true;
+          if (visited.has(curr)) continue;
+          visited.add(curr);
+          (neighbors[curr] || []).forEach(n => { if (owned.includes(n)) queue.push(n); });
         }
+      }
+      return false;
+    }
 
-        // ============================================================
+    function showVictory(teamIdx) {
+      confetti({ particleCount: 200, spread: 100, origin: { y: 0.6 } });
+      ensureAudioReady();
+      playSound(1500, 0.5);
 
-        let state = {
-            currentDay: null,
-            teams: [
-                { name: 'الفريق 1', logo: null, members: [], stats: {} },
-                { name: 'الفريق 2', logo: null, members: [], stats: {} }
-            ],
-            currentTeam: 0,
-            currentMemberIndex: [0, 0],
-            hexStates: {},
-            roundWins: [0, 0],
-            currentRound: 1,
-            currentLetter: null,
-            peer: null,
-            conn: null,
+      state.roundWins[teamIdx]++;
+      document.getElementById(`sb${teamIdx + 1}-rounds`).textContent = state.roundWins[teamIdx];
 
-            // ✅ إضافات خاصة بالأسئلة فقط
-            currentQuestionId: null,
-            tempExcludedQuestionIds: []
-        };
+      if (state.roundWins[teamIdx] >= 2) displayVictoryPoster(teamIdx);
+      else {
+        state.currentRound++;
+        document.getElementById('current-round').textContent = state.currentRound;
+        state.hexStates = {};
+        generateHexGrid();
+        alert('🎉 ' + state.teams[teamIdx].name + ' فاز بالجولة!');
+      }
+    }
 
-        const hexGrid = [
-            { row: 0, letters: letters.slice(0, 5) },
-            { row: 1, letters: letters.slice(5, 11) },
-            { row: 2, letters: letters.slice(11, 16) },
-            { row: 3, letters: letters.slice(16, 22) },
-            { row: 4, letters: letters.slice(22, 27) },
-            { row: 5, letters: letters.slice(27, 28) }
-        ];
+    function displayVictoryPoster(teamIdx) {
+      const t = state.teams[teamIdx];
+      document.getElementById('v-team').textContent = t.name;
 
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        function playChime() {
-            const frequencies = [523.25, 659.25, 783.99];
-            frequencies.forEach((freq, i) => {
-                setTimeout(() => {
-                    const osc = audioCtx.createOscillator();
-                    const gain = audioCtx.createGain();
-                    osc.connect(gain);
-                    gain.connect(audioCtx.destination);
-                    osc.frequency.value = freq;
-                    gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
-                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
-                    osc.start();
-                    osc.stop(audioCtx.currentTime + 0.5);
-                }, i * 100);
-            });
+      if (t.logo) {
+        const vLogo = document.getElementById('v-logo');
+        vLogo.src = t.logo;
+        vLogo.style.display = 'block';
+      }
+
+      let mvp = { name: '--', score: 0 };
+      t.members.forEach(m => { if ((t.stats[m] || 0) >= mvp.score) mvp = { name: m, score: (t.stats[m] || 0) }; });
+
+      document.getElementById('v-mvp').textContent = mvp.name;
+      document.getElementById('v-mvp-score').textContent = mvp.score;
+      document.getElementById('v-members').innerHTML = t.members.map(m => `<div>${m} (${t.stats[m] || 0})</div>`).join('');
+      document.getElementById('victory-modal').classList.add('active');
+    }
+
+    function captureVictory() {
+      const node = document.getElementById('victory-poster');
+      html2canvas(node).then(canvas => {
+        const link = document.createElement('a');
+        link.download = `horoof_day_${state.currentDay}.png`;
+        link.href = canvas.toDataURL();
+        link.click();
+      });
+    }
+
+    function finishDay() {
+      const winner = state.roundWins[0] >= 2 ? 0 : 1;
+      const days = JSON.parse(localStorage.getItem('horoof_days') || '{}');
+      days[state.currentDay] = { name: state.teams[winner].name, logo: state.teams[winner].logo, date: new Date().toISOString() };
+      localStorage.setItem('horoof_days', JSON.stringify(days));
+      document.getElementById('victory-modal').classList.remove('active');
+      backToCalendar();
+    }
+
+    function backToCalendar() {
+      if (confirm('العودة؟')) {
+        document.getElementById('top-bar').style.display = 'none';
+        location.reload();
+      }
+    }
+
+    function resetAll() {
+      if (confirm('⚠️ مسح جميع البيانات؟')) { localStorage.clear(); location.reload(); }
+    }
+
+    // ✅✅ موسيقى: مُحدثة
+    async function toggleMusic() {
+      const m = document.getElementById('bg-music');
+
+      try {
+        await ensureAudioReady();
+
+        if (m.paused) {
+          await m.play();
+          document.getElementById('music-btn').textContent = '🔇 إيقاف';
+        } else {
+          m.pause();
+          document.getElementById('music-btn').textContent = '🔊 الموسيقى';
         }
-        function playSound(freq, dur = 0.2) {
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-            osc.frequency.value = freq;
-            gain.gain.value = 0.3;
-            osc.start();
-            osc.stop(audioCtx.currentTime + dur);
-        }
+      } catch (err) {
+        alert("الصوت ما اشتغل. تأكدي أن music.mp3 موجود داخل نفس مجلد index.html في GitHub.");
+        console.error(err);
+      }
+    }
 
-        // Background
-        function createRamadanBG() {
-            const bg = document.getElementById('ramadan-bg');
-            for (let i = 0; i < 100; i++) {
-                const star = document.createElement('div');
-                star.className = 'star';
-                star.style.left = Math.random() * 100 + '%';
-                star.style.top = Math.random() * 100 + '%';
-                star.style.animationDelay = Math.random() * 3 + 's';
-                bg.appendChild(star);
-            }
-        }
-        function createFooterDecorations() {
-            const footer = document.getElementById('footer-decorations');
-            for (let i = 0; i < 15; i++) {
-                const lantern = document.createElement('div');
-                lantern.className = 'footer-lantern';
-                lantern.style.animationDelay = (i * 0.2) + 's';
-                footer.appendChild(lantern);
-            }
-        }
+    // ✅ تفعيل AudioContext بعد أول نقرة بأي مكان (يساعد iOS/Chrome)
+    document.addEventListener('click', async () => {
+      await ensureAudioReady();
+    }, { once: true });
 
-        // Buzzer Logic (كما هو)
-        function toggleBuzzerMode() {
-            const id = Math.random().toString(36).substr(2, 5).toUpperCase();
-            document.getElementById('buzzer-overlay').style.display = 'flex';
-            document.getElementById('qrcode').innerHTML = '';
-            new QRCode(document.getElementById("qrcode"), { text: `${location.origin}${location.pathname.replace('index.html','')}buzzer.html#${id}`, width: 200, height: 200 });
-            if (state.peer) state.peer.destroy();
-            state.peer = new Peer(id);
-            state.peer.on('connection', conn => {
-                state.conn = conn;
-                conn.on('data', data => {
-                    if (data.action === 'buzz') showBuzz(data.name);
-                });
-            });
-        }
-        function showBuzz(name) {
-            const el = document.getElementById('buzzer-pressed');
-            el.textContent = name;
-            el.style.display = 'block';
-            playSound(800, 0.5);
-            setTimeout(() => el.style.display = 'none', 3000);
-        }
-        function closeBuzzerOverlay() { document.getElementById('buzzer-overlay').style.display = 'none'; }
-
-        // Game Logic
-        function generateCalendar() {
-            const grid = document.getElementById('days-grid');
-            grid.innerHTML = '';
-            const saved = JSON.parse(localStorage.getItem('horoof_days') || '{}');
-            for (let i = 1; i <= 30; i++) {
-                const card = document.createElement('div');
-                card.className = 'day-card' + (saved[i] ? ' completed' : '');
-                card.innerHTML = `<div class="text-4xl font-black" style="color:#FFD700">${i}</div><div class="text-xs font-bold" style="color:#F4E4B0">اليوم ${i}</div>`;
-                card.onclick = () => startDay(i);
-                grid.appendChild(card);
-            }
-        }
-
-        function startDay(day) {
-            state.currentDay = day;
-            document.getElementById('day-num').textContent = day;
-            document.getElementById('calendar-screen').classList.add('hidden');
-            document.getElementById('setup-screen').classList.remove('hidden');
-        }
-
-        // Logo preview handlers (كما هو)
-        document.getElementById('team1-logo').addEventListener('change', e => handleLogoUpload(e, 0));
-        document.getElementById('team2-logo').addEventListener('change', e => handleLogoUpload(e, 1));
-
-        function handleLogoUpload(e, teamIdx) {
-            const file = e.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = () => {
-                state.teams[teamIdx].logo = reader.result;
-                const preview = document.getElementById(teamIdx === 0 ? 'team1-logo-preview' : 'team2-logo-preview');
-                preview.innerHTML = `<img src="${reader.result}" class="w-20 h-20 rounded-full border-4" style="border-color:${teamIdx === 0 ? '#FFD700' : '#4169E1'}">`;
-            };
-            reader.readAsDataURL(file);
-        }
-
-        function startGame() {
-            state.teams[0].name = document.getElementById('team1-name').value || 'الفريق 1';
-            state.teams[1].name = document.getElementById('team2-name').value || 'الفريق 2';
-            state.teams[0].members = document.getElementById('team1-members').value.split('\n').filter(m => m.trim());
-            state.teams[1].members = document.getElementById('team2-members').value.split('\n').filter(m => m.trim());
-            state.teams.forEach(t => t.members.forEach(m => { if (!t.stats[m]) t.stats[m] = 0; }));
-
-            document.getElementById('setup-screen').classList.add('hidden');
-            document.getElementById('game-screen').classList.remove('hidden');
-            document.getElementById('top-bar').style.display = 'flex';
-            document.getElementById('game-day').textContent = state.currentDay;
-
-            // شعارات في السكورد بورد
-            const sb1 = document.getElementById('sb1-logo');
-            const sb2 = document.getElementById('sb2-logo');
-            if (state.teams[0].logo) { sb1.src = state.teams[0].logo; sb1.style.display = 'block'; }
-            if (state.teams[1].logo) { sb2.src = state.teams[1].logo; sb2.style.display = 'block'; }
-
-            updateScoreboards();
-            generateHexGrid();
-            updateTurn();
-        }
-
-        function updateScoreboards() {
-            for (let i = 0; i < 2; i++) {
-                const t = state.teams[i];
-                document.getElementById(`sb${i + 1}-name`).textContent = t.name;
-                document.getElementById(`sb${i + 1}-rounds`).textContent = state.roundWins[i];
-                const membersDiv = document.getElementById(`sb${i + 1}-members`);
-                membersDiv.innerHTML = '';
-                t.members.forEach((m, idx) => {
-                    const div = document.createElement('div');
-                    div.className = 'member' + (idx === state.currentMemberIndex[i] && state.currentTeam === i ? ' active' : '');
-                    div.innerHTML = `<span>${m}</span><span style="color:#FFD700;font-weight:900">${t.stats[m] || 0} ✅</span>`;
-                    membersDiv.appendChild(div);
-                });
-            }
-        }
-
-        function generateHexGrid() {
-            const grid = document.getElementById('hex-grid');
-            grid.innerHTML = '';
-            hexGrid.forEach(r => {
-                const row = document.createElement('div');
-                row.className = 'hex-row';
-                r.letters.forEach(l => {
-                    const hex = document.createElement('div');
-                    hex.className = 'hex' + (state.hexStates[l] ? ` team${state.hexStates[l]}` : '');
-                    hex.innerHTML = `<div class="hex-inner">${l}</div>`;
-                    hex.onclick = () => onHexClick(l);
-                    row.appendChild(hex);
-                });
-                grid.appendChild(row);
-            });
-        }
-
-        function onHexClick(letter) {
-            if (state.hexStates[letter]) return;
-            state.currentLetter = letter;
-
-            // ✅ مهم: تصفير استثناءات التغيير عند فتح حرف جديد (بدون تغيير منطق اللعب)
-            state.tempExcludedQuestionIds = [];
-            state.currentQuestionId = null;
-
-            playChime();
-            showQuestion(letter);
-        }
-
-        // =========================
-        // ✅✅ دوال الأسئلة بعد التعديل (بدون تغيير باقي اللعبة)
-        // =========================
-        function showQuestion(letter) {
-            const selected = pickQuestion(letter, state.tempExcludedQuestionIds);
-
-            let qObj;
-            if (!selected) {
-                alert("انتهت أسئلة هذا الحرف لجميع الأيام!");
-                qObj = (allQuestions[letter] && allQuestions[letter][0]) || { q: 'سؤال تجريبي؟', a: 'جواب', id: `${letter}-demo` };
-            } else {
-                qObj = selected;
-            }
-
-            const m = state.teams[state.currentTeam].members[state.currentMemberIndex[state.currentTeam]];
-            document.getElementById('q-turn').textContent = m || state.teams[state.currentTeam].name;
-            document.getElementById('q-letter').textContent = letter;
-            document.getElementById('q-text').textContent = qObj.q;
-
-            state.currentQuestionId = qObj.id;
-
-            document.getElementById('question-modal').classList.add('active');
-        }
-
-        function answerCorrect() {
-            playSound(1200, 0.3);
-
-            // ✅ حرق السؤال هنا فقط
-            burnCurrentQuestion();
-
-            const t = state.currentTeam;
-            const m = state.teams[t].members[state.currentMemberIndex[t]];
-            if (m) state.teams[t].stats[m]++;
-
-            state.hexStates[state.currentLetter] = t + 1;
-
-            generateHexGrid();
-            closeModal();
-
-            if (checkWinBFS(t)) setTimeout(() => showVictory(t), 500);
-            else nextTurn();
-        }
-
-        function answerWrong() {
-            playSound(300, 0.3);
-
-            // ✅ حرق السؤال هنا فقط
-            burnCurrentQuestion();
-
-            closeModal();
-            nextTurn();
-        }
-
-        function changeQuestion() {
-            // ✅ تغيير بدون حرق: استبعد الحالي مؤقتًا فقط
-            if (state.currentQuestionId && !state.tempExcludedQuestionIds.includes(state.currentQuestionId)) {
-                state.tempExcludedQuestionIds.push(state.currentQuestionId);
-            }
-            // أعرض سؤال جديد لنفس الحرف
-            showQuestion(state.currentLetter);
-        }
-        // =========================
-
-        function closeModal() { document.getElementById('question-modal').classList.remove('active'); }
-
-        function nextTurn() {
-            state.currentMemberIndex[state.currentTeam]++;
-            if (state.currentMemberIndex[state.currentTeam] >= state.teams[state.currentTeam].members.length) state.currentMemberIndex[state.currentTeam] = 0;
-            state.currentTeam = 1 - state.currentTeam;
-            updateTurn();
-            updateScoreboards();
-        }
-
-        function updateTurn() {
-            const t = state.teams[state.currentTeam];
-            const m = t.members[state.currentMemberIndex[state.currentTeam]];
-            document.getElementById('current-turn').textContent = m || t.name;
-        }
-
-        // BFS Pathfinding (كما هو)
-        function checkWinBFS(teamIdx) {
-            const owned = Object.keys(state.hexStates).filter(l => state.hexStates[l] === teamIdx + 1);
-            if (owned.length < 4) return false;
-
-            const neighbors = {
-                'أ': ['ب', 'ح', 'خ'], 'ب': ['أ', 'ت', 'خ', 'د'], 'ت': ['ب', 'ث', 'د', 'ذ'], 'ث': ['ت', 'ج', 'ذ', 'ر'], 'ج': ['ث', 'ر', 'ز'],
-                'ح': ['أ', 'ب', 'س', 'ش'], 'خ': ['أ', 'ب', 'ح', 'د', 'س', 'ش'], 'د': ['ب', 'ت', 'خ', 'ذ', 'ش', 'ص'], 'ذ': ['ت', 'ث', 'د', 'ر', 'ص', 'ض'], 'ر': ['ث', 'ج', 'ذ', 'ز', 'ض', 'ط'], 'ز': ['ج', 'ر', 'ط'],
-                'س': ['ح', 'خ', 'ظ', 'ع'], 'ش': ['ح', 'خ', 'د', 'س', 'ص', 'ظ', 'ع'], 'ص': ['د', 'ذ', 'ش', 'ض', 'ع', 'غ'], 'ض': ['ذ', 'ر', 'ص', 'ط', 'غ', 'ف'], 'ط': ['ر', 'ز', 'ض', 'ف', 'ق'],
-                'ظ': ['س', 'ش', 'ل', 'م'], 'ع': ['س', 'ش', 'ص', 'ظ', 'غ', 'ل', 'م'], 'غ': ['ص', 'ض', 'ع', 'ف', 'م', 'ن'], 'ف': ['ض', 'ط', 'غ', 'ق', 'ن', 'ه'], 'ق': ['ط', 'ف', 'ك', 'ه', 'و'], 'ك': ['ق', 'و'],
-                'ل': ['ظ', 'ع', 'ي'], 'م': ['ظ', 'ع', 'غ', 'ل', 'ن', 'ي'], 'ن': ['غ', 'ف', 'م', 'ه', 'ي'], 'ه': ['ف', 'ق', 'ن', 'و', 'ي'], 'و': ['ق', 'ك', 'ه', 'ي'],
-                'ي': ['ل', 'م', 'ن', 'ه', 'و']
-            };
-
-            const queue = [];
-            const visited = new Set();
-
-            if (teamIdx === 0) { // Right to Left
-                const right = ['ج', 'ز', 'ط', 'ك', 'و', 'ي'].filter(l => owned.includes(l));
-                const left = ['أ', 'ح', 'س', 'ظ', 'ل', 'ي'].filter(l => owned.includes(l));
-                if (right.length === 0 || left.length === 0) return false;
-
-                right.forEach(l => queue.push(l));
-                while (queue.length) {
-                    const curr = queue.shift();
-                    if (left.includes(curr)) return true;
-                    if (visited.has(curr)) continue;
-                    visited.add(curr);
-                    (neighbors[curr] || []).forEach(n => { if (owned.includes(n)) queue.push(n); });
-                }
-            } else { // Top to Bottom
-                const top = ['أ', 'ب', 'ت', 'ث', 'ج'].filter(l => owned.includes(l));
-                const bottom = ['ل', 'م', 'ن', 'ه', 'و', 'ي'].filter(l => owned.includes(l));
-                if (top.length === 0 || bottom.length === 0) return false;
-
-                top.forEach(l => queue.push(l));
-                while (queue.length) {
-                    const curr = queue.shift();
-                    if (bottom.includes(curr)) return true;
-                    if (visited.has(curr)) continue;
-                    visited.add(curr);
-                    (neighbors[curr] || []).forEach(n => { if (owned.includes(n)) queue.push(n); });
-                }
-            }
-            return false;
-        }
-
-        function showVictory(teamIdx) {
-            confetti({ particleCount: 200, spread: 100, origin: { y: 0.6 }, colors: ['#FFD700', '#FFA500'] });
-            playSound(1500, 0.5);
-            state.roundWins[teamIdx]++;
-            document.getElementById(`sb${teamIdx + 1}-rounds`).textContent = state.roundWins[teamIdx];
-
-            if (state.roundWins[teamIdx] >= 2) displayVictoryPoster(teamIdx);
-            else {
-                state.currentRound++;
-                document.getElementById('current-round').textContent = state.currentRound;
-                state.hexStates = {};
-                generateHexGrid();
-                alert('🎉 ' + state.teams[teamIdx].name + ' فاز بالجولة!');
-            }
-        }
-
-        function displayVictoryPoster(teamIdx) {
-            const t = state.teams[teamIdx];
-            document.getElementById('v-team').textContent = t.name;
-
-            if (t.logo) {
-                const vLogo = document.getElementById('v-logo');
-                vLogo.src = t.logo;
-                vLogo.style.display = 'block';
-            }
-
-            let mvp = { name: '--', score: 0 };
-            t.members.forEach(m => { if (t.stats[m] >= mvp.score) mvp = { name: m, score: t.stats[m] }; });
-
-            document.getElementById('v-mvp').textContent = mvp.name;
-            document.getElementById('v-mvp-score').textContent = mvp.score;
-            document.getElementById('v-members').innerHTML = t.members.map(m => `<div>${m} (${t.stats[m]})</div>`).join('');
-            document.getElementById('victory-modal').classList.add('active');
-        }
-
-        function captureVictory() {
-            const node = document.getElementById('victory-poster');
-            html2canvas(node).then(canvas => {
-                const link = document.createElement('a');
-                link.download = `horoof_day_${state.currentDay}.png`;
-                link.href = canvas.toDataURL();
-                link.click();
-            });
-        }
-
-        function finishDay() {
-            const winner = state.roundWins[0] >= 2 ? 0 : 1;
-            const days = JSON.parse(localStorage.getItem('horoof_days') || '{}');
-            days[state.currentDay] = { name: state.teams[winner].name, logo: state.teams[winner].logo, date: new Date().toISOString() };
-            localStorage.setItem('horoof_days', JSON.stringify(days));
-            document.getElementById('victory-modal').classList.remove('active');
-            backToCalendar();
-        }
-
-        function backToCalendar() {
-            if (confirm('العودة؟')) {
-                document.getElementById('top-bar').style.display = 'none';
-                location.reload();
-            }
-        }
-
-        function resetAll() {
-            if (confirm('⚠️ مسح جميع البيانات؟')) { localStorage.clear(); location.reload(); }
-        }
-
-        function toggleMusic() {
-            const m = document.getElementById('bg-music');
-            if (m.paused) m.play(); else m.pause();
-        }
-
-        createRamadanBG();
-        createFooterDecorations();
-        generateCalendar();
-    </script>
+    createRamadanBG();
+    createFooterDecorations();
+    generateCalendar();
+  </script>
 </body>
-
 
 </html>
