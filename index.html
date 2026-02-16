@@ -1555,7 +1555,7 @@
             const id = Math.random().toString(36).substr(2, 5).toUpperCase();
             document.getElementById('buzzer-overlay').style.display = 'flex';
             document.getElementById('qrcode').innerHTML = '';
-            new QRCode(document.getElementById("qrcode"), { text: `${location.origin}${location.pathname}#${id}`, width: 200, height: 200 });
+            new QRCode(document.getElementById("qrcode"), { text: `${location.origin}${location.pathname.replace('index.html','')}buzzer.html#${id}`, width: 200, height: 200 });
             if (state.peer) state.peer.destroy();
             state.peer = new Peer(id);
             state.peer.on('connection', conn => {
@@ -1880,5 +1880,6 @@
         generateCalendar();
     </script>
 </body>
+
 
 </html>
